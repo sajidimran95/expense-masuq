@@ -12,6 +12,7 @@
                     <select name="type" id="type" class="form-select" data-report-type>
                         <option value="monthly" @selected($reportType === 'monthly')>মাসিক রিপোর্ট</option>
                         <option value="date" @selected($reportType === 'date')>তারিখ অনুযায়ী রিপোর্ট</option>
+                        <option value="date_range" @selected($reportType === 'date_range')>তারিখ রেঞ্জ রিপোর্ট</option>
                         <option value="yearly" @selected($reportType === 'yearly')>বার্ষিক রিপোর্ট</option>
                     </select>
                 </div>
@@ -24,6 +25,16 @@
                 <div class="col-md-3 report-filter report-filter-date">
                     <label for="date" class="form-label fw-bold">তারিখ নির্বাচন করুন</label>
                     <input type="date" id="date" name="date" value="{{ $selectedDate }}" class="form-control">
+                </div>
+
+                <div class="col-md-3 report-filter report-filter-date_range">
+                    <label for="start_date" class="form-label fw-bold">শুরুর তারিখ</label>
+                    <input type="date" id="start_date" name="start_date" value="{{ $selectedStartDate }}" class="form-control">
+                </div>
+
+                <div class="col-md-3 report-filter report-filter-date_range">
+                    <label for="end_date" class="form-label fw-bold">শেষ তারিখ</label>
+                    <input type="date" id="end_date" name="end_date" value="{{ $selectedEndDate }}" class="form-control">
                 </div>
 
                 <div class="col-md-3 report-filter report-filter-yearly">
@@ -221,7 +232,9 @@
 
             const toggleFilters = () => {
                 filters.forEach((filter) => filter.classList.add('d-none'));
-                document.querySelector(`.report-filter-${reportType.value}`)?.classList.remove('d-none');
+                document
+                    .querySelectorAll(`.report-filter-${reportType.value}`)
+                    .forEach((filter) => filter.classList.remove('d-none'));
             };
 
             reportType.addEventListener('change', toggleFilters);

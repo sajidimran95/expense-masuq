@@ -141,37 +141,48 @@ class ReportController extends Controller
         ]);
     }
 
-    /**
-     * @return array{reportType: string, selectedMonth: string, selectedDate: string, selectedYear: string, reportTitle: string}
-     */
     private function reportData(Request $request): array
     {
         $reportType = $request->query('type', 'monthly');
-        $reportType = in_array($reportType, ['monthly', 'date', 'yearly'], true) ? $reportType : 'monthly';
+        $reportType = in_array($reportType, ['monthly', 'date', 'date_range', 'yearly'], true) ? $reportType : 'monthly';
         $selectedMonth = $request->query('month', now()->format('Y-m'));
         $selectedDate = $request->query('date', now()->toDateString());
+        $selectedStartDate = $request->query('start_date', now()->startOfMonth()->toDateString());
+        $selectedEndDate = $request->query('end_date', now()->toDateString());
         $selectedYear = $request->query('year', now()->format('Y'));
 
         if ($reportType === 'date') {
             $reportTitle = $this->banglaNumber(date('d-m-Y', strtotime($selectedDate))).' তারিখের রিপোর্ট';
+        } elseif ($reportType === 'date_range') {
+            $startDate = Carbon::parse($selectedStartDate);
+            $endDate = Carbon::parse($selectedEndDate);
+
+            if ($startDate->gt($endDate)) {
+                [$startDate, $endDate] = [$endDate, $startDate];
+                $selectedStartDate = $startDate->toDateString();
+                $selectedEndDate = $endDate->toDateString();
+            }
+
+            $reportTitle = $this->banglaNumber($startDate->format('d-m-Y')).' থেকে '.$this->banglaNumber($endDate->format('d-m-Y')).' রিপোর্ট';
         } elseif ($reportType === 'yearly') {
             $reportTitle = $this->banglaNumber($selectedYear).' সালের রিপোর্ট';
         } else {
             $reportTitle = $this->monthLabel($selectedMonth).' মাসের রিপোর্ট';
         }
 
-        return compact('reportType', 'selectedMonth', 'selectedDate', 'selectedYear', 'reportTitle');
+        return compact('reportType', 'selectedMonth', 'selectedDate', 'selectedStartDate', 'selectedEndDate', 'selectedYear', 'reportTitle');
     }
 
-    /**
-     * @param  array{reportType: string, selectedMonth: string, selectedDate: string, selectedYear: string, reportTitle: string}  $data
-     */
     private function filteredQuery(array $data): \Illuminate\Database\Eloquent\Builder
     {
         $query = Expense::query();
 
         if ($data['reportType'] === 'date') {
             return $query->whereDate('expense_date', $data['selectedDate']);
+        }
+
+        if ($data['reportType'] === 'date_range') {
+            return $query->whereBetween('expense_date', [$data['selectedStartDate'], $data['selectedEndDate']]);
         }
 
         if ($data['reportType'] === 'yearly') {
@@ -181,9 +192,6 @@ class ReportController extends Controller
         return $query->where('expense_month', $data['selectedMonth']);
     }
 
-    /**
-     * @param  array{reportType: string, selectedMonth: string, selectedDate: string, selectedYear: string, reportTitle: string}  $data
-     */
     private function groupedExpenses(array $data): \Illuminate\Support\Collection
     {
         return $this->filteredQuery($data)
@@ -220,9 +228,6 @@ class ReportController extends Controller
         return $months[$date->format('F')].'-'.$this->banglaNumber($date->format('Y'));
     }
 
-    /**
-     * @param  array{reportType: string, selectedMonth: string, selectedDate: string, selectedYear: string, reportTitle: string}  $data
-     */
     private function exportFileName(array $data, string $extension): string
     {
         if ($data['reportType'] === 'yearly') {
@@ -231,6 +236,10 @@ class ReportController extends Controller
 
         if ($data['reportType'] === 'date') {
             return $this->banglaNumber(Carbon::parse($data['selectedDate'])->format('d-m-Y')).'-তারিখের-রিপোর্ট.'.$extension;
+        }
+
+        if ($data['reportType'] === 'date_range') {
+            return $this->banglaNumber(Carbon::parse($data['selectedStartDate'])->format('d-m-Y')).'-থেকে-'.$this->banglaNumber(Carbon::parse($data['selectedEndDate'])->format('d-m-Y')).'-রিপোর্ট.'.$extension;
         }
 
         return $this->monthLabel($data['selectedMonth']).'-মাসের-রিপোর্ট.'.$extension;

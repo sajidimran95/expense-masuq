@@ -108,12 +108,12 @@
     </style>
 </head>
 <body>
-    @if ($reportType === 'yearly')
+    @if (in_array($reportType, ['yearly', 'date_range'], true))
         <div class="meta">{{ $reportTitle }}</div>
     @endif
 
     @forelse ($groups as $month => $expenses)
-        <h2>{{ $reportType === 'yearly' ? $monthLabel($month) : $reportTitle }}</h2>
+        <h2>{{ in_array($reportType, ['yearly', 'date_range'], true) ? $monthLabel($month) : $reportTitle }}</h2>
 
         <table>
             <thead>
