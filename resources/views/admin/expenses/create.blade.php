@@ -26,14 +26,6 @@
                         <p class="mb-1 fw-bold">মাস অটো সেট হবে</p>
                         <p class="mb-0 text-secondary">প্রতিটি খরচের তারিখ থেকে মাস অটোমেটিক যোগ হবে।</p>
                     </div>
-                    <div class="col-md-6 text-md-end">
-                        <button type="button" class="btn btn-outline-primary" id="add-expense-row">
-                            <i class="fa-solid fa-plus me-1"></i> আরেকটি খরচ যোগ করুন
-                        </button>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fa-solid fa-floppy-disk me-1"></i> সব খরচ সেভ করুন
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -98,9 +90,14 @@
                 <a href="{{ route('admin.expenses.index', ['month' => $selectedMonth]) }}" class="btn btn-outline-secondary">
                     <i class="fa-solid fa-arrow-left me-1"></i> তালিকায় ফিরুন
                 </a>
-                <button type="submit" class="btn btn-success">
-                    <i class="fa-solid fa-floppy-disk me-1"></i> সব খরচ সেভ করুন
-                </button>
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <button type="button" class="btn btn-outline-primary" id="add-expense-row">
+                        <i class="fa-solid fa-plus me-1"></i> আরেকটি খরচ যোগ করুন
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> সব খরচ সেভ করুন
+                    </button>
+                </div>
             </div>
         </div>
     </form>
