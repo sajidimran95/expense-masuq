@@ -10,7 +10,7 @@
 </head>
 <body class="min-h-screen bg-slate-950 pb-24 text-white antialiased sm:pb-0">
     <main class="relative overflow-hidden">
-        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('https://images.unsplash.com/photo-1554224154-22dec7ec8818?auto=format&fit=crop&w=1920&q=85');"></div>
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ $siteSetting->frontBackgroundUrl() }}');"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/65 to-transparent"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-slate-950/10"></div>
 
@@ -28,15 +28,15 @@
             <div class="flex flex-1 items-end py-8 sm:items-center sm:py-16">
                 <div class="relative z-10 w-full max-w-3xl rounded-[2rem] border border-white/10 bg-slate-950/65 p-5 shadow-2xl shadow-slate-950/40 backdrop-blur-md sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-0">
                     <p class="mb-4 inline-flex rounded-full border border-blue-300/40 bg-blue-400/15 px-4 py-2 text-xs font-bold text-blue-100 sm:text-sm">
-                        দৈনিক ও মাসিক খরচ হিসাব সফটওয়্যার
+                        {{ $siteSetting->frontBadgeText() }}
                     </p>
 
                     <h1 class="text-3xl font-black leading-tight tracking-tight drop-shadow-2xl sm:text-5xl lg:text-6xl">
-                        প্রতিদিনের খরচ ও মাসিক বাজেট সহজে হিসাব করুন।
+                        {{ $siteSetting->frontTitle() }}
                     </h1>
 
                     <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-100 drop-shadow sm:mt-5 sm:text-lg sm:leading-7">
-                        দৈনিক খরচ, মাসিক বাজেট, রসিদ, অনুমোদন এবং ক্যাটাগরি রিপোর্ট এক জায়গা থেকে সুন্দরভাবে ম্যানেজ করুন।
+                        {{ $siteSetting->frontDescription() }}
                     </p>
 
                     <div class="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4">

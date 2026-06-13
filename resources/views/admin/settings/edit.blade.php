@@ -52,6 +52,35 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <hr class="my-4">
+
+                        <h4 class="fw-bold">Front Page Content</h4>
+                        <p class="text-secondary">Home page banner text এখান থেকে পরিবর্তন করুন।</p>
+
+                        <div class="mb-3">
+                            <label for="front_badge_text" class="form-label fw-bold">Small Badge Text</label>
+                            <input type="text" id="front_badge_text" name="front_badge_text" value="{{ old('front_badge_text', $setting->front_badge_text) }}" class="form-control @error('front_badge_text') is-invalid @enderror">
+                            @error('front_badge_text')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="front_title" class="form-label fw-bold">Front Title</label>
+                            <input type="text" id="front_title" name="front_title" value="{{ old('front_title', $setting->front_title) }}" class="form-control @error('front_title') is-invalid @enderror">
+                            @error('front_title')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="front_description" class="form-label fw-bold">Front Description</label>
+                            <textarea id="front_description" name="front_description" rows="4" class="form-control @error('front_description') is-invalid @enderror">{{ old('front_description', $setting->front_description) }}</textarea>
+                            @error('front_description')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
             </div>
@@ -88,6 +117,20 @@
                             <input type="file" id="favicon" name="favicon" class="form-control @error('favicon') is-invalid @enderror" accept=".ico,.jpg,.jpeg,.png,.webp,.svg,image/*">
                             <small class="text-secondary">ICO, PNG, JPG, WEBP বা SVG. Max 1MB.</small>
                             @error('favicon')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="setting-preview mb-4 setting-preview-wide">
+                            <span>বর্তমান Front BG</span>
+                            <img src="{{ $setting->frontBackgroundUrl() }}" alt="Current front background">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="front_background" class="form-label fw-bold">Front Page Background</label>
+                            <input type="file" id="front_background" name="front_background" class="form-control @error('front_background') is-invalid @enderror" accept=".jpg,.jpeg,.png,.webp,image/*">
+                            <small class="text-secondary">JPG, PNG বা WEBP. Max 4MB.</small>
+                            @error('front_background')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

@@ -34,6 +34,9 @@ class DatabaseSeeder extends Seeder
             'favicon' => 'images/expense-logo.svg',
             'meta_title' => 'Expense Management',
             'meta_description' => 'দৈনিক ও মাসিক খরচ, রিপোর্ট এবং অনুমোদন সহজে ম্যানেজ করার সফটওয়্যার।',
+            'front_badge_text' => 'দৈনিক ও মাসিক খরচ হিসাব সফটওয়্যার',
+            'front_title' => 'প্রতিদিনের খরচ ও মাসিক বাজেট সহজে হিসাব করুন।',
+            'front_description' => 'দৈনিক খরচ, মাসিক বাজেট, রসিদ, অনুমোদন এবং ক্যাটাগরি রিপোর্ট এক জায়গা থেকে সুন্দরভাবে ম্যানেজ করুন।',
         ]);
     }
 }

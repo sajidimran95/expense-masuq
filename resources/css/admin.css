@@ -309,6 +309,12 @@
     padding: 0.35rem;
 }
 
+.setting-preview-wide img {
+    width: 7rem;
+    height: 4.5rem;
+    object-fit: cover;
+}
+
 .permission-card {
     display: flex;
     align-items: center;

@@ -25,12 +25,17 @@ class SettingController extends Controller
             'company_name' => ['required', 'string', 'max:255'],
             'logo' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
             'favicon' => ['nullable', 'file', 'mimes:ico,jpg,jpeg,png,webp,svg', 'max:1024'],
+            'front_background' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:500'],
+            'front_badge_text' => ['nullable', 'string', 'max:255'],
+            'front_title' => ['nullable', 'string', 'max:255'],
+            'front_description' => ['nullable', 'string', 'max:700'],
         ], [
             'company_name.required' => 'কোম্পানির নাম দিন।',
             'logo.mimes' => 'Logo JPG, PNG, WEBP বা SVG হতে হবে।',
             'favicon.mimes' => 'Favicon ICO, JPG, PNG, WEBP বা SVG হতে হবে।',
+            'front_background.mimes' => 'Front page background JPG, PNG বা WEBP হতে হবে।',
         ]);
 
         if ($request->hasFile('logo')) {
@@ -45,6 +50,13 @@ class SettingController extends Controller
             $validated['favicon'] = $this->storeSettingImage($request->file('favicon'), 'favicon');
         } else {
             unset($validated['favicon']);
+        }
+
+        if ($request->hasFile('front_background')) {
+            $this->deleteUploadedFile($setting->front_background);
+            $validated['front_background'] = $this->storeSettingImage($request->file('front_background'), 'front_bg');
+        } else {
+            unset($validated['front_background']);
         }
 
         $setting->update($validated);
