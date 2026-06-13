@@ -65,7 +65,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('admin.reports.index') }}" class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-chart-pie"></i>
                                 <p>রিপোর্ট</p>
                             </a>
@@ -119,7 +119,7 @@
                 <i class="fa-solid fa-receipt"></i>
                 <span>খরচ</span>
             </a>
-            <a href="#">
+            <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-chart-pie"></i>
                 <span>রিপোর্ট</span>
             </a>

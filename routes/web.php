@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExpenseController;
+use App\Http\Controllers\Admin\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,6 +24,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
         Route::put('expenses/{expense}', [ExpenseController::class, 'update'])->name('expenses.update');
         Route::delete('expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+        Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     });
 });
