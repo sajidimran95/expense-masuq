@@ -61,6 +61,7 @@
                             <th>টাকার পরিমাণ</th>
                             <th>ভাউচার নং</th>
                             <th>অনুমোদন</th>
+                            <th>অ্যাকশন</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -79,10 +80,27 @@
                                         -
                                     @endif
                                 </td>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <a href="{{ route('admin.expenses.show', $expense) }}" class="btn btn-info btn-sm text-white">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('admin.expenses.edit', $expense) }}" class="btn btn-warning btn-sm text-white">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </a>
+                                        <form method="POST" action="{{ route('admin.expenses.destroy', $expense) }}" onsubmit="return confirm('আপনি কি এই খরচটি মুছে ফেলতে চান?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="py-5 text-center text-secondary">
+                                <td colspan="8" class="py-5 text-center text-secondary">
                                     এই মাসে কোনো খরচ যোগ করা হয়নি।
                                 </td>
                             </tr>

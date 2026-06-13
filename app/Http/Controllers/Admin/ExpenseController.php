@@ -40,6 +40,20 @@ class ExpenseController extends Controller
         ]);
     }
 
+    public function show(Expense $expense): View
+    {
+        return view('admin.expenses.show', [
+            'expense' => $expense,
+        ]);
+    }
+
+    public function edit(Expense $expense): View
+    {
+        return view('admin.expenses.edit', [
+            'expense' => $expense,
+        ]);
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -82,6 +96,59 @@ class ExpenseController extends Controller
             ->with('status', 'খরচ সফলভাবে যোগ করা হয়েছে।');
     }
 
+    public function update(Request $request, Expense $expense): RedirectResponse
+    {
+        $validated = $request->validate([
+            'expense_date' => ['required', 'date'],
+            'sector' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'amount' => ['required', 'numeric', 'min:0'],
+            'voucher_no' => ['nullable', 'string', 'max:255'],
+            'approval' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+        ], [
+            'expense_date.required' => 'তারিখ দিন।',
+            'sector.required' => 'খাত দিন।',
+            'description.required' => 'বিবরণ দিন।',
+            'amount.required' => 'টাকার পরিমাণ দিন।',
+            'amount.numeric' => 'টাকার পরিমাণ সংখ্যা হতে হবে।',
+            'approval.image' => 'অনুমোদন হিসেবে PNG বা JPG ছবি দিন।',
+            'approval.mimes' => 'অনুমোদন শুধু PNG, JPG বা JPEG হতে পারবে।',
+        ]);
+
+        $approvalPath = $expense->approval;
+
+        if ($request->hasFile('approval')) {
+            $this->deleteApprovalSignature($expense->approval);
+            $approvalPath = $this->storeApprovalSignature($validated['approval']);
+        }
+
+        $expense->update([
+            'expense_month' => substr($validated['expense_date'], 0, 7),
+            'expense_date' => $validated['expense_date'],
+            'sector' => $validated['sector'],
+            'description' => $this->sanitizeDescription($validated['description']),
+            'amount' => $validated['amount'],
+            'voucher_no' => $validated['voucher_no'] ?? null,
+            'approval' => $approvalPath,
+        ]);
+
+        return redirect()
+            ->route('admin.expenses.show', $expense)
+            ->with('status', 'খরচ সফলভাবে আপডেট হয়েছে।');
+    }
+
+    public function destroy(Expense $expense): RedirectResponse
+    {
+        $month = $expense->expense_month;
+
+        $this->deleteApprovalSignature($expense->approval);
+        $expense->delete();
+
+        return redirect()
+            ->route('admin.expenses.index', ['month' => $month])
+            ->with('status', 'খরচ সফলভাবে মুছে ফেলা হয়েছে।');
+    }
+
     private function sanitizeDescription(string $description): string
     {
         return strip_tags($description, '<p><br><strong><b><em><i><u><ol><ul><li>');
@@ -103,5 +170,18 @@ class ExpenseController extends Controller
         $file->move($directory, $filename);
 
         return 'uploads/signatures/'.$filename;
+    }
+
+    private function deleteApprovalSignature(?string $path): void
+    {
+        if (! $path) {
+            return;
+        }
+
+        $fullPath = public_path($path);
+
+        if (is_file($fullPath)) {
+            unlink($fullPath);
+        }
     }
 }
