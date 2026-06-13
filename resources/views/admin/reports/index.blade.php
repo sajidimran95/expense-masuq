@@ -67,6 +67,25 @@
         </div>
     </div>
 
+    <div class="card expense-card mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <div>
+                    <h5 class="fw-bold mb-1">Export রিপোর্ট</h5>
+                    <p class="text-secondary mb-0">বর্তমান filter অনুযায়ী month-wise headline, table এবং total সহ export হবে।</p>
+                </div>
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <a href="{{ route('admin.reports.export.csv', request()->query()) }}" class="btn btn-outline-success">
+                        <i class="fa-solid fa-file-csv me-1"></i> CSV Export
+                    </a>
+                    <a href="{{ route('admin.reports.export.pdf', request()->query()) }}" class="btn btn-outline-danger">
+                        <i class="fa-solid fa-file-pdf me-1"></i> PDF Export
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card expense-card">
         <div class="card-header border-0">
             <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
