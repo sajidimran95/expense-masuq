@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExpenseController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StaffController;
@@ -22,6 +23,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/', fn () => redirect()->route('admin.dashboard'))->name('home');
         Route::get('dashboard', DashboardController::class)->name('dashboard');
+        Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 
         Route::middleware('permission:expenses')->group(function () {
             Route::get('expenses', [ExpenseController::class, 'index'])->name('expenses.index');
