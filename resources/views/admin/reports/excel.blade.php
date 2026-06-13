@@ -63,7 +63,7 @@
             <col style="width: 120px;">
             <col style="width: 130px;">
         </colgroup>
-        @if (in_array($reportType, ['yearly', 'date_range'], true))
+        @if (in_array($reportType, ['all', 'yearly', 'date_range'], true))
             <tr>
                 <td colspan="7" class="report-title">{{ $reportTitle }}</td>
             </tr>
@@ -72,7 +72,7 @@
 
         @forelse ($groups as $month => $expenses)
             <tr>
-                <td colspan="7" class="month-title">{{ in_array($reportType, ['yearly', 'date_range'], true) ? $monthLabel($month) : $reportTitle }}</td>
+                <td colspan="7" class="month-title">{{ in_array($reportType, ['all', 'yearly', 'date_range'], true) ? $monthLabel($month) : $reportTitle }}</td>
             </tr>
             <tr>
                 <th>ক্রমিক</th>

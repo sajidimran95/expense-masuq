@@ -10,6 +10,7 @@
                 <div class="col-md-3">
                     <label for="type" class="form-label fw-bold">রিপোর্ট টাইপ</label>
                     <select name="type" id="type" class="form-select" data-report-type>
+                        <option value="all" @selected($reportType === 'all')>সব রিপোর্ট</option>
                         <option value="monthly" @selected($reportType === 'monthly')>মাসিক রিপোর্ট</option>
                         <option value="date" @selected($reportType === 'date')>তারিখ অনুযায়ী রিপোর্ট</option>
                         <option value="date_range" @selected($reportType === 'date_range')>তারিখ রেঞ্জ রিপোর্ট</option>

@@ -143,15 +143,17 @@ class ReportController extends Controller
 
     private function reportData(Request $request): array
     {
-        $reportType = $request->query('type', 'monthly');
-        $reportType = in_array($reportType, ['monthly', 'date', 'date_range', 'yearly'], true) ? $reportType : 'monthly';
+        $reportType = $request->query('type', 'all');
+        $reportType = in_array($reportType, ['all', 'monthly', 'date', 'date_range', 'yearly'], true) ? $reportType : 'monthly';
         $selectedMonth = $request->query('month', now()->format('Y-m'));
         $selectedDate = $request->query('date', now()->toDateString());
         $selectedStartDate = $request->query('start_date', now()->startOfMonth()->toDateString());
         $selectedEndDate = $request->query('end_date', now()->toDateString());
         $selectedYear = $request->query('year', now()->format('Y'));
 
-        if ($reportType === 'date') {
+        if ($reportType === 'all') {
+            $reportTitle = 'সকল খরচের রিপোর্ট';
+        } elseif ($reportType === 'date') {
             $reportTitle = $this->banglaNumber(date('d-m-Y', strtotime($selectedDate))).' তারিখের রিপোর্ট';
         } elseif ($reportType === 'date_range') {
             $startDate = Carbon::parse($selectedStartDate);
@@ -176,6 +178,10 @@ class ReportController extends Controller
     private function filteredQuery(array $data): \Illuminate\Database\Eloquent\Builder
     {
         $query = Expense::query();
+
+        if ($data['reportType'] === 'all') {
+            return $query;
+        }
 
         if ($data['reportType'] === 'date') {
             return $query->whereDate('expense_date', $data['selectedDate']);
@@ -230,6 +236,10 @@ class ReportController extends Controller
 
     private function exportFileName(array $data, string $extension): string
     {
+        if ($data['reportType'] === 'all') {
+            return 'সকল-খরচের-রিপোর্ট.'.$extension;
+        }
+
         if ($data['reportType'] === 'yearly') {
             return $this->banglaNumber($data['selectedYear']).'-সালের-রিপোর্ট.'.$extension;
         }
