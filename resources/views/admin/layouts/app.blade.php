@@ -59,24 +59,41 @@
                             </a>
                         </li>
                         <li class="nav-header">খরচ</li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.expenses.index') }}" class="nav-link {{ request()->routeIs('admin.expenses.*') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-receipt"></i>
-                                <p>খরচ তালিকা</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.reports.index') }}" class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-chart-pie"></i>
-                                <p>রিপোর্ট</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.settings.edit') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-                                <i class="nav-icon fa-solid fa-gear"></i>
-                                <p>সেটিংস</p>
-                            </a>
-                        </li>
+                        @if (auth()->user()->canAccess('expenses'))
+                            <li class="nav-item">
+                                <a href="{{ route('admin.expenses.index') }}" class="nav-link {{ request()->routeIs('admin.expenses.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fa-solid fa-receipt"></i>
+                                    <p>খরচ তালিকা</p>
+                                </a>
+                            </li>
+                        @endif
+                        @if (auth()->user()->canAccess('reports'))
+                            <li class="nav-item">
+                                <a href="{{ route('admin.reports.index') }}" class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fa-solid fa-chart-pie"></i>
+                                    <p>রিপোর্ট</p>
+                                </a>
+                            </li>
+                        @endif
+                        @if (auth()->user()->canAccess('staff') || auth()->user()->canAccess('settings'))
+                            <li class="nav-header">ম্যানেজমেন্ট</li>
+                        @endif
+                        @if (auth()->user()->canAccess('staff'))
+                            <li class="nav-item">
+                                <a href="{{ route('admin.staff.index') }}" class="nav-link {{ request()->routeIs('admin.staff.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fa-solid fa-users-gear"></i>
+                                    <p>Staff/User</p>
+                                </a>
+                            </li>
+                        @endif
+                        @if (auth()->user()->canAccess('settings'))
+                            <li class="nav-item">
+                                <a href="{{ route('admin.settings.edit') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fa-solid fa-gear"></i>
+                                    <p>সেটিংস</p>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </nav>
             </div>
@@ -116,18 +133,29 @@
                 <i class="fa-solid fa-gauge-high"></i>
                 <span>ড্যাশবোর্ড</span>
             </a>
-            <a href="{{ route('admin.expenses.index') }}" class="{{ request()->routeIs('admin.expenses.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-receipt"></i>
-                <span>খরচ</span>
-            </a>
-            <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-chart-pie"></i>
-                <span>রিপোর্ট</span>
-            </a>
-            <a href="{{ route('admin.settings.edit') }}" class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-gear"></i>
-                <span>সেটিংস</span>
-            </a>
+            @if (auth()->user()->canAccess('expenses'))
+                <a href="{{ route('admin.expenses.index') }}" class="{{ request()->routeIs('admin.expenses.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span>খরচ</span>
+                </a>
+            @endif
+            @if (auth()->user()->canAccess('reports'))
+                <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>রিপোর্ট</span>
+                </a>
+            @endif
+            @if (auth()->user()->canAccess('staff'))
+                <a href="{{ route('admin.staff.index') }}" class="{{ request()->routeIs('admin.staff.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-users-gear"></i>
+                    <span>Staff</span>
+                </a>
+            @elseif (auth()->user()->canAccess('settings'))
+                <a href="{{ route('admin.settings.edit') }}" class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>সেটিংস</span>
+                </a>
+            @endif
         </nav>
     </div>
 </body>

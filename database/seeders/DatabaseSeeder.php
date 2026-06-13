@@ -23,6 +23,9 @@ class DatabaseSeeder extends Seeder
             'name' => 'খরচ অ্যাডমিন',
             'password' => Hash::make('password'),
             'is_admin' => true,
+            'role' => 'super_admin',
+            'permissions' => ['expenses', 'reports', 'settings', 'staff'],
+            'is_active' => true,
         ]);
 
         SiteSetting::query()->firstOrCreate([], [

@@ -18,14 +18,14 @@ class EnsureAdmin
             return redirect()->route('admin.login');
         }
 
-        if (! Auth::user()->is_admin) {
+        if (! Auth::user()->is_admin || ! Auth::user()->is_active) {
             Auth::logout();
 
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             return redirect()->route('admin.login')->withErrors([
-                'email' => 'Please sign in with an admin account.',
+                'email' => 'Please sign in with an active admin or staff account.',
             ]);
         }
 

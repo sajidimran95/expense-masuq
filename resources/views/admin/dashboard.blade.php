@@ -11,12 +11,16 @@
             <p>মাসিক খরচ, রিপোর্ট, অনুমোদন এবং সাম্প্রতিক এন্ট্রি এক জায়গা থেকে দেখুন।</p>
         </div>
         <div class="dashboard-hero-actions">
-            <a href="{{ route('admin.expenses.create') }}" class="btn btn-light">
-                <i class="fa-solid fa-plus me-1"></i> নতুন খরচ
-            </a>
-            <a href="{{ route('admin.reports.index') }}" class="btn btn-outline-light">
-                <i class="fa-solid fa-chart-pie me-1"></i> রিপোর্ট দেখুন
-            </a>
+            @if (auth()->user()->canAccess('expenses'))
+                <a href="{{ route('admin.expenses.create') }}" class="btn btn-light">
+                    <i class="fa-solid fa-plus me-1"></i> নতুন খরচ
+                </a>
+            @endif
+            @if (auth()->user()->canAccess('reports'))
+                <a href="{{ route('admin.reports.index') }}" class="btn btn-outline-light">
+                    <i class="fa-solid fa-chart-pie me-1"></i> রিপোর্ট দেখুন
+                </a>
+            @endif
         </div>
     </div>
 
@@ -43,15 +47,17 @@
                             <h3 class="card-title fw-bold">সাম্প্রতিক খরচ</h3>
                             <p class="text-secondary mb-0">নতুন থেকে পুরনো ক্রমে সর্বশেষ খরচ এন্ট্রি।</p>
                         </div>
-                        <a href="{{ route('admin.expenses.index') }}" class="btn btn-primary btn-sm">
-                            সব দেখুন <i class="fa-solid fa-arrow-right ms-1"></i>
-                        </a>
+                        @if (auth()->user()->canAccess('expenses'))
+                            <a href="{{ route('admin.expenses.index') }}" class="btn btn-primary btn-sm">
+                                সব দেখুন <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </a>
+                        @endif
                     </div>
                 </div>
                 <div class="card-body p-0">
                     <div class="dashboard-expense-list">
                         @forelse ($recentExpenses as $expense)
-                            <a href="{{ route('admin.expenses.show', $expense) }}" class="dashboard-expense-item">
+                            <a href="{{ auth()->user()->canAccess('expenses') ? route('admin.expenses.show', $expense) : '#' }}" class="dashboard-expense-item">
                                 <div class="expense-icon">
                                     <i class="fa-solid fa-receipt"></i>
                                 </div>
@@ -75,7 +81,9 @@
                                 <i class="fa-solid fa-receipt"></i>
                                 <h4>এখনো কোনো খরচ নেই</h4>
                                 <p>প্রথম খরচ এন্ট্রি যোগ করলে এখানে সাম্প্রতিক তালিকা দেখাবে।</p>
-                                <a href="{{ route('admin.expenses.create') }}" class="btn btn-primary btn-sm">খরচ যোগ করুন</a>
+                                @if (auth()->user()->canAccess('expenses'))
+                                    <a href="{{ route('admin.expenses.create') }}" class="btn btn-primary btn-sm">খরচ যোগ করুন</a>
+                                @endif
                             </div>
                         @endforelse
                     </div>
@@ -115,18 +123,28 @@
                     <h4 class="fw-bold">দ্রুত কাজ</h4>
                     <p class="text-secondary">প্রয়োজনীয় কাজগুলো দ্রুত শুরু করুন।</p>
                     <div class="dashboard-actions">
-                        <a href="{{ route('admin.expenses.create') }}">
-                            <i class="fa-solid fa-circle-plus"></i>
-                            <span>খরচ যোগ</span>
-                        </a>
-                        <a href="{{ route('admin.expenses.index') }}">
-                            <i class="fa-solid fa-list-check"></i>
-                            <span>তালিকা</span>
-                        </a>
-                        <a href="{{ route('admin.reports.index') }}">
-                            <i class="fa-solid fa-file-export"></i>
-                            <span>রিপোর্ট</span>
-                        </a>
+                        @if (auth()->user()->canAccess('expenses'))
+                            <a href="{{ route('admin.expenses.create') }}">
+                                <i class="fa-solid fa-circle-plus"></i>
+                                <span>খরচ যোগ</span>
+                            </a>
+                            <a href="{{ route('admin.expenses.index') }}">
+                                <i class="fa-solid fa-list-check"></i>
+                                <span>তালিকা</span>
+                            </a>
+                        @endif
+                        @if (auth()->user()->canAccess('reports'))
+                            <a href="{{ route('admin.reports.index') }}">
+                                <i class="fa-solid fa-file-export"></i>
+                                <span>রিপোর্ট</span>
+                            </a>
+                        @endif
+                        @if (auth()->user()->canAccess('staff'))
+                            <a href="{{ route('admin.staff.index') }}">
+                                <i class="fa-solid fa-users-gear"></i>
+                                <span>Staff</span>
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>
