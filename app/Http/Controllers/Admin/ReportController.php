@@ -37,7 +37,7 @@ class ReportController extends Controller
     {
         $data = $this->reportData($request);
         $groups = $this->groupedExpenses($data);
-        $filename = 'expense-report-'.$data['reportType'].'-'.now()->format('YmdHis').'.csv';
+        $filename = $this->exportFileName($data, 'csv');
 
         return response()->streamDownload(function () use ($groups, $data): void {
             $handle = fopen('php://output', 'w');
@@ -118,7 +118,7 @@ class ReportController extends Controller
 
         return response($pdf->Output('', 'S'), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="expense-report-'.$data['reportType'].'-'.now()->format('YmdHis').'.pdf"',
+            'Content-Disposition' => $this->downloadHeader($this->exportFileName($data, 'pdf'), 'expense-report.pdf'),
         ]);
     }
 
@@ -132,11 +132,12 @@ class ReportController extends Controller
             'monthLabel' => fn (string $month): string => $this->monthLabel($month),
             'cleanDescription' => fn (string $description): string => strip_tags($description),
             'bn' => fn (string|int|float $value): string => $this->banglaNumber($value),
+            'signatureSource' => fn (?string $path): ?string => $this->excelImageSource($path),
         ]))->render();
 
         return response($html, 200, [
             'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="expense-report-'.$data['reportType'].'-'.now()->format('YmdHis').'.xls"',
+            'Content-Disposition' => $this->downloadHeader($this->exportFileName($data, 'xls'), 'expense-report.xls'),
         ]);
     }
 
@@ -219,6 +220,27 @@ class ReportController extends Controller
         return $months[$date->format('F')].'-'.$this->banglaNumber($date->format('Y'));
     }
 
+    /**
+     * @param  array{reportType: string, selectedMonth: string, selectedDate: string, selectedYear: string, reportTitle: string}  $data
+     */
+    private function exportFileName(array $data, string $extension): string
+    {
+        if ($data['reportType'] === 'yearly') {
+            return $this->banglaNumber($data['selectedYear']).'-সালের-রিপোর্ট.'.$extension;
+        }
+
+        if ($data['reportType'] === 'date') {
+            return $this->banglaNumber(Carbon::parse($data['selectedDate'])->format('d-m-Y')).'-তারিখের-রিপোর্ট.'.$extension;
+        }
+
+        return $this->monthLabel($data['selectedMonth']).'-মাসের-রিপোর্ট.'.$extension;
+    }
+
+    private function downloadHeader(string $filename, string $fallback): string
+    {
+        return "attachment; filename=\"{$fallback}\"; filename*=UTF-8''".rawurlencode($filename);
+    }
+
     private function cleanPdfDescription(string $description): string
     {
         return strip_tags($description, '<p><br><strong><b><em><i><u><ol><ul><li>');
@@ -249,5 +271,22 @@ class ReportController extends Controller
         $fullPath = public_path($path);
 
         return is_file($fullPath) ? $fullPath : null;
+    }
+
+    private function excelImageSource(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+
+        $fullPath = public_path($path);
+
+        if (! is_file($fullPath)) {
+            return null;
+        }
+
+        $mime = mime_content_type($fullPath) ?: 'image/png';
+
+        return 'data:'.$mime.';base64,'.base64_encode((string) file_get_contents($fullPath));
     }
 }

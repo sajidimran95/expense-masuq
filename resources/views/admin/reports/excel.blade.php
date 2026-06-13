@@ -45,10 +45,24 @@
             background: #dcfce7;
             font-weight: bold;
         }
+
+        .signature {
+            width: 70px;
+            height: 32px;
+        }
     </style>
 </head>
 <body>
     <table>
+        <colgroup>
+            <col style="width: 70px;">
+            <col style="width: 110px;">
+            <col style="width: 170px;">
+            <col style="width: 320px;">
+            <col style="width: 130px;">
+            <col style="width: 120px;">
+            <col style="width: 130px;">
+        </colgroup>
         @if ($reportType === 'yearly')
             <tr>
                 <td colspan="7" class="report-title">{{ $reportTitle }}</td>
@@ -78,7 +92,13 @@
                     <td>{{ $cleanDescription($expense->description) }}</td>
                     <td class="amount">{{ $bn(number_format((float) $expense->amount, 2)) }} টাকা</td>
                     <td>{{ $expense->voucher_no ?: '-' }}</td>
-                    <td>{{ $expense->approval ? 'আছে' : '-' }}</td>
+                    <td style="width: 90px; height: 38px; text-align: center; vertical-align: middle;">
+                        @if ($signatureSource($expense->approval))
+                            <img src="{{ $signatureSource($expense->approval) }}" class="signature" width="70" height="32" style="width: 70px; height: 32px;" alt="অনুমোদন">
+                        @else
+                            -
+                        @endif
+                    </td>
                 </tr>
             @endforeach
 
