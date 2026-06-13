@@ -86,6 +86,8 @@ class ReportController extends Controller
             'grandTotal' => $this->grandTotal($groups),
             'monthLabel' => fn (string $month): string => $this->monthLabel($month),
             'cleanDescription' => fn (string $description): string => $this->cleanPdfDescription($description),
+            'bn' => fn (string|int|float $value): string => $this->banglaNumber($value),
+            'signaturePath' => fn (?string $path): ?string => $this->pdfImagePath($path),
         ]))->render();
         $config = (new ConfigVariables())->getDefaults();
         $fontConfig = (new FontVariables())->getDefaults();
@@ -186,5 +188,32 @@ class ReportController extends Controller
     private function cleanPdfDescription(string $description): string
     {
         return strip_tags($description, '<p><br><strong><b><em><i><u><ol><ul><li>');
+    }
+
+    private function banglaNumber(string|int|float $value): string
+    {
+        return strtr((string) $value, [
+            '0' => '০',
+            '1' => '১',
+            '2' => '২',
+            '3' => '৩',
+            '4' => '৪',
+            '5' => '৫',
+            '6' => '৬',
+            '7' => '৭',
+            '8' => '৮',
+            '9' => '৯',
+        ]);
+    }
+
+    private function pdfImagePath(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+
+        $fullPath = public_path($path);
+
+        return is_file($fullPath) ? $fullPath : null;
     }
 }

@@ -97,6 +97,11 @@
             text-align: center;
             color: #64748b;
         }
+
+        .signature {
+            width: 55px;
+            max-height: 28px;
+        }
     </style>
 </head>
 <body>
@@ -121,18 +126,24 @@
             <tbody>
                 @foreach ($expenses as $expense)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $expense->expense_date->format('d-m-Y') }}</td>
+                        <td>{{ $bn($loop->iteration) }}</td>
+                        <td>{{ $bn($expense->expense_date->format('d-m-Y')) }}</td>
                         <td>{{ $expense->sector }}</td>
                         <td>{!! $cleanDescription($expense->description) !!}</td>
-                        <td class="amount">৳ {{ number_format((float) $expense->amount, 2) }}</td>
+                        <td class="amount">{{ $bn(number_format((float) $expense->amount, 2)) }} টাকা</td>
                         <td>{{ $expense->voucher_no ?: '-' }}</td>
-                        <td>{{ $expense->approval ? 'আছে' : '-' }}</td>
+                        <td>
+                            @if ($signaturePath($expense->approval))
+                                <img src="{{ $signaturePath($expense->approval) }}" class="signature" alt="অনুমোদন">
+                            @else
+                                -
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
                 <tr class="month-total">
                     <td colspan="4" class="total-label">মোট</td>
-                    <td class="amount">৳ {{ number_format((float) $expenses->sum('amount'), 2) }}</td>
+                    <td class="amount">{{ $bn(number_format((float) $expenses->sum('amount'), 2)) }} টাকা</td>
                     <td colspan="2"></td>
                 </tr>
             </tbody>
@@ -142,7 +153,7 @@
     @endforelse
 
     <div class="grand-total">
-        সর্বমোট: ৳ {{ number_format((float) $grandTotal, 2) }}
+        সর্বমোট: {{ $bn(number_format((float) $grandTotal, 2)) }} টাকা
     </div>
 </body>
 </html>
