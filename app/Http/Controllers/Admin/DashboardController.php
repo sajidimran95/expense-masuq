@@ -17,7 +17,6 @@ class DashboardController extends Controller
         $monthlyTotal = (float) Expense::where('expense_month', $currentMonth)->sum('amount');
         $yearlyTotal = (float) Expense::whereYear('expense_date', $currentYear)->sum('amount');
         $totalEntries = Expense::count();
-        $signatureCount = Expense::whereNotNull('approval')->count();
         $recentExpenses = Expense::latest('expense_date')->latest()->take(6)->get();
         $topSectors = Expense::selectRaw('sector, SUM(amount) as total_amount, COUNT(*) as total_entries')
             ->groupBy('sector')
@@ -31,7 +30,6 @@ class DashboardController extends Controller
                 ['label' => 'এই মাসের খরচ', 'value' => $this->money($monthlyTotal), 'icon' => 'fa-wallet', 'tone' => 'blue'],
                 ['label' => 'এই বছরের খরচ', 'value' => $this->money($yearlyTotal), 'icon' => 'fa-chart-line', 'tone' => 'green'],
                 ['label' => 'মোট এন্ট্রি', 'value' => $this->bn($totalEntries), 'icon' => 'fa-receipt', 'tone' => 'orange'],
-                ['label' => 'অনুমোদন আছে', 'value' => $this->bn($signatureCount), 'icon' => 'fa-signature', 'tone' => 'blue'],
             ],
             'recentExpenses' => $recentExpenses,
             'topSectors' => $topSectors,
