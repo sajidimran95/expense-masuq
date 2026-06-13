@@ -33,9 +33,14 @@
                 <div class="text-md-end">
                     <p class="mb-2 text-secondary">{{ $filterType === 'yearly' ? 'নির্বাচিত বছরের মোট খরচ' : 'নির্বাচিত মাসের মোট খরচ' }}</p>
                     <h3 class="fw-black mb-3">৳ {{ number_format((float) $totalAmount, 2) }}</h3>
-                    <a href="{{ route('admin.expenses.create', ['month' => $selectedMonth]) }}" class="btn btn-success">
-                        <i class="fa-solid fa-plus me-1"></i> নতুন খরচ যোগ করুন
-                    </a>
+                    <div class="d-flex flex-column flex-sm-row justify-content-md-end gap-2">
+                        <a href="{{ route('admin.expenses.import') }}" class="btn btn-outline-primary">
+                            <i class="fa-solid fa-file-import me-1"></i> Bulk Upload
+                        </a>
+                        <a href="{{ route('admin.expenses.create', ['month' => $selectedMonth]) }}" class="btn btn-success">
+                            <i class="fa-solid fa-plus me-1"></i> নতুন খরচ যোগ করুন
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,9 +59,14 @@
                     <h3 class="card-title fw-bold">খরচের বিস্তারিত</h3>
                     <p class="text-secondary mb-0">{{ $filterType === 'yearly' ? $selectedYear.' সালের সকল খরচ এখানে দেখাবে।' : 'মাসভিত্তিক সকল খরচ এখানে দেখাবে।' }}</p>
                 </div>
-                <a href="{{ route('admin.expenses.create', ['month' => $selectedMonth]) }}" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-plus me-1"></i> Add
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('admin.expenses.import') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fa-solid fa-file-import me-1"></i> Upload
+                    </a>
+                    <a href="{{ route('admin.expenses.create', ['month' => $selectedMonth]) }}" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-plus me-1"></i> Add
+                    </a>
+                </div>
             </div>
         </div>
 

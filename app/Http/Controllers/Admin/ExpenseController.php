@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Expense;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class ExpenseController extends Controller
@@ -47,6 +50,91 @@ class ExpenseController extends Controller
         return view('admin.expenses.create', [
             'selectedMonth' => $request->query('month', now()->format('Y-m')),
         ]);
+    }
+
+    public function import(): View
+    {
+        return view('admin.expenses.import');
+    }
+
+    public function demoImportFile(): Response
+    {
+        $html = view('admin.expenses.import-demo')->render();
+
+        return response($html, 200, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="expense-bulk-upload-demo.xls"',
+        ]);
+    }
+
+    public function importStore(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'import_file' => ['required', 'file', 'max:2048'],
+        ], [
+            'import_file.required' => 'Excel/CSV file upload করুন।',
+        ]);
+
+        $extension = strtolower($request->file('import_file')->getClientOriginalExtension());
+
+        if (! in_array($extension, ['csv', 'txt', 'xls'], true)) {
+            return back()->withErrors(['import_file' => 'File CSV বা demo Excel (.xls) হতে হবে।']);
+        }
+
+        $rows = $this->importRows($request->file('import_file')->getRealPath(), $extension);
+        $created = 0;
+        $errors = [];
+
+        DB::transaction(function () use ($rows, &$created, &$errors): void {
+            foreach ($rows as $index => $row) {
+                $rowNumber = $index + 2;
+                $data = [
+                    'expense_date' => $this->normalizeDate($row[0] ?? ''),
+                    'sector' => trim((string) ($row[1] ?? '')),
+                    'description' => trim((string) ($row[2] ?? '')),
+                    'amount' => $this->normalizeAmount($row[3] ?? ''),
+                    'voucher_no' => trim((string) ($row[4] ?? '')),
+                ];
+
+                if ($data['expense_date'] === '' && $data['sector'] === '' && $data['description'] === '' && $data['amount'] === '') {
+                    continue;
+                }
+
+                $validator = Validator::make($data, [
+                    'expense_date' => ['required', 'date'],
+                    'sector' => ['required', 'string', 'max:255'],
+                    'description' => ['required', 'string'],
+                    'amount' => ['required', 'numeric', 'min:0'],
+                    'voucher_no' => ['nullable', 'string', 'max:255'],
+                ]);
+
+                if ($validator->fails()) {
+                    $errors[] = 'Row '.$rowNumber.': '.$validator->errors()->first();
+
+                    continue;
+                }
+
+                Expense::query()->create([
+                    'expense_month' => substr($data['expense_date'], 0, 7),
+                    'expense_date' => $data['expense_date'],
+                    'sector' => $data['sector'],
+                    'description' => e($data['description']),
+                    'amount' => $data['amount'],
+                    'voucher_no' => $data['voucher_no'] ?: null,
+                    'approval' => null,
+                ]);
+
+                $created++;
+            }
+        });
+
+        if ($created === 0) {
+            return back()->withErrors(['import_file' => $errors[0] ?? 'কোনো valid row পাওয়া যায়নি।']);
+        }
+
+        return redirect()
+            ->route('admin.expenses.index', ['month' => now()->format('Y-m')])
+            ->with('status', $created.'টি খরচ bulk upload হয়েছে।'.($errors ? ' কিছু row skip হয়েছে।' : ''));
     }
 
     public function show(Expense $expense): View
@@ -219,6 +307,97 @@ class ExpenseController extends Controller
         ]);
 
         return preg_replace('/[^0-9.]/', '', $amount) ?: '';
+    }
+
+    private function normalizeDate(mixed $date): string
+    {
+        $date = strtr((string) $date, [
+            '০' => '0',
+            '۱' => '1',
+            '۲' => '2',
+            '۳' => '3',
+            '۴' => '4',
+            '۵' => '5',
+            '۶' => '6',
+            '۷' => '7',
+            '۸' => '8',
+            '۹' => '9',
+            '٠' => '0',
+            '١' => '1',
+            '٢' => '2',
+            '٣' => '3',
+            '٤' => '4',
+            '٥' => '5',
+            '٦' => '6',
+            '٧' => '7',
+            '٨' => '8',
+            '٩' => '9',
+        ]);
+        $date = preg_replace_callback('/[\x{09E6}-\x{09EF}\x{0660}-\x{0669}\x{06F0}-\x{06F9}]/u', function (array $match): string {
+            $code = mb_ord($match[0]);
+
+            return (string) match (true) {
+                $code >= 0x09E6 && $code <= 0x09EF => $code - 0x09E6,
+                $code >= 0x0660 && $code <= 0x0669 => $code - 0x0660,
+                $code >= 0x06F0 && $code <= 0x06F9 => $code - 0x06F0,
+                default => $match[0],
+            };
+        }, $date);
+        $date = str_replace(['/', '.'], '-', trim((string) $date));
+
+        foreach (['Y-m-d', 'd-m-Y', 'd-m-y'] as $format) {
+            try {
+                return Carbon::createFromFormat($format, $date)->format('Y-m-d');
+            } catch (\Throwable) {
+                //
+            }
+        }
+
+        try {
+            return Carbon::parse($date)->format('Y-m-d');
+        } catch (\Throwable) {
+            return '';
+        }
+    }
+
+    private function importRows(string $path, string $extension): array
+    {
+        $content = (string) file_get_contents($path);
+
+        if (strtolower($extension) === 'xls' && str_contains(strtolower($content), '<table')) {
+            return $this->htmlTableRows($content);
+        }
+
+        $rows = [];
+        $handle = fopen($path, 'r');
+
+        if (! $handle) {
+            return [];
+        }
+
+        while (($row = fgetcsv($handle)) !== false) {
+            $rows[] = array_map(fn ($value): string => trim((string) $value), $row);
+        }
+
+        fclose($handle);
+
+        return array_slice($rows, 1);
+    }
+
+    private function htmlTableRows(string $html): array
+    {
+        preg_match_all('/<tr[^>]*>(.*?)<\/tr>/is', $html, $rowMatches);
+        $rows = [];
+
+        foreach ($rowMatches[1] as $rowHtml) {
+            preg_match_all('/<t[dh][^>]*>(.*?)<\/t[dh]>/is', $rowHtml, $cellMatches);
+            $rows[] = array_map(
+                fn (string $cell): string => trim(html_entity_decode(strip_tags($cell), ENT_QUOTES, 'UTF-8')),
+                $cellMatches[1]
+            );
+        }
+
+        return array_slice($rows, 1);
     }
 
     private function storeApprovalSignature(mixed $file): ?string

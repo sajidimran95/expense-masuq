@@ -327,6 +327,20 @@
     height: 1.1rem;
 }
 
+.bulk-format-list {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.bulk-format-list span {
+    display: block;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.9rem;
+    background: #f8fafc;
+    font-weight: 800;
+}
+
 .mobile-list {
     display: grid;
     gap: 0.85rem;

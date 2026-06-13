@@ -23,6 +23,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::middleware('permission:expenses')->group(function () {
             Route::get('expenses', [ExpenseController::class, 'index'])->name('expenses.index');
             Route::get('expenses/create', [ExpenseController::class, 'create'])->name('expenses.create');
+            Route::get('expenses/import', [ExpenseController::class, 'import'])->name('expenses.import');
+            Route::post('expenses/import', [ExpenseController::class, 'importStore'])->name('expenses.import.store');
+            Route::get('expenses/import/demo', [ExpenseController::class, 'demoImportFile'])->name('expenses.import.demo');
             Route::post('expenses', [ExpenseController::class, 'store'])->name('expenses.store');
             Route::get('expenses/{expense}', [ExpenseController::class, 'show'])->name('expenses.show');
             Route::get('expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
