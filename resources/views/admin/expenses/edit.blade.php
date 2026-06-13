@@ -61,7 +61,7 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">টাকার পরিমাণ <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" min="0" name="amount" value="{{ old('amount', $expense->amount) }}" class="form-control @error('amount') is-invalid @enderror" required>
+                        <input type="text" inputmode="decimal" name="amount" value="{{ old('amount', $expense->amount) }}" class="form-control @error('amount') is-invalid @enderror" placeholder="৳ ১২৩৪.৫০ / 1234.50" required>
                         @error('amount')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

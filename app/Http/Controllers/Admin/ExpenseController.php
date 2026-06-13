@@ -13,22 +13,31 @@ class ExpenseController extends Controller
 {
     public function index(Request $request): View
     {
+        $filterType = $request->query('type', 'monthly');
+        $filterType = in_array($filterType, ['monthly', 'yearly'], true) ? $filterType : 'monthly';
         $selectedMonth = $request->query('month', now()->format('Y-m'));
+        $selectedYear = $request->query('year', now()->format('Y'));
+        $query = Expense::query();
 
-        $expenses = Expense::query()
-            ->where('expense_month', $selectedMonth)
+        if ($filterType === 'yearly') {
+            $query->whereYear('expense_date', $selectedYear);
+        } else {
+            $query->where('expense_month', $selectedMonth);
+        }
+
+        $expenses = (clone $query)
             ->latest('expense_date')
             ->latest()
             ->paginate(15)
             ->withQueryString();
 
-        $totalAmount = Expense::query()
-            ->where('expense_month', $selectedMonth)
-            ->sum('amount');
+        $totalAmount = (clone $query)->sum('amount');
 
         return view('admin.expenses.index', [
             'expenses' => $expenses,
+            'filterType' => $filterType,
             'selectedMonth' => $selectedMonth,
+            'selectedYear' => $selectedYear,
             'totalAmount' => $totalAmount,
         ]);
     }
@@ -56,6 +65,8 @@ class ExpenseController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $this->normalizeAmountInputs($request);
+
         $validated = $request->validate([
             'expenses' => ['required', 'array', 'min:1'],
             'expenses.*.expense_date' => ['required', 'date'],
@@ -98,6 +109,8 @@ class ExpenseController extends Controller
 
     public function update(Request $request, Expense $expense): RedirectResponse
     {
+        $this->normalizeAmountInputs($request);
+
         $validated = $request->validate([
             'expense_date' => ['required', 'date'],
             'sector' => ['required', 'string', 'max:255'],
@@ -152,6 +165,60 @@ class ExpenseController extends Controller
     private function sanitizeDescription(string $description): string
     {
         return strip_tags($description, '<p><br><strong><b><em><i><u><ol><ul><li>');
+    }
+
+    private function normalizeAmountInputs(Request $request): void
+    {
+        if ($request->has('expenses')) {
+            $expenses = collect($request->input('expenses', []))
+                ->map(function (array $expense): array {
+                    if (array_key_exists('amount', $expense)) {
+                        $expense['amount'] = $this->normalizeAmount($expense['amount']);
+                    }
+
+                    return $expense;
+                })
+                ->all();
+
+            $request->merge(['expenses' => $expenses]);
+
+            return;
+        }
+
+        if ($request->has('amount')) {
+            $request->merge([
+                'amount' => $this->normalizeAmount($request->input('amount')),
+            ]);
+        }
+    }
+
+    private function normalizeAmount(mixed $amount): string
+    {
+        $amount = strtr((string) $amount, [
+            '০' => '0',
+            '১' => '1',
+            '২' => '2',
+            '৩' => '3',
+            '৪' => '4',
+            '৫' => '5',
+            '৬' => '6',
+            '৭' => '7',
+            '৮' => '8',
+            '৯' => '9',
+            '٠' => '0',
+            '١' => '1',
+            '٢' => '2',
+            '٣' => '3',
+            '٤' => '4',
+            '٥' => '5',
+            '٦' => '6',
+            '٧' => '7',
+            '٨' => '8',
+            '٩' => '9',
+            '٫' => '.',
+        ]);
+
+        return preg_replace('/[^0-9.]/', '', $amount) ?: '';
     }
 
     private function storeApprovalSignature(mixed $file): ?string

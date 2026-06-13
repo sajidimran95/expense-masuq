@@ -7,12 +7,23 @@
     <div class="card expense-card mb-4">
         <div class="card-body">
             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-                <form method="GET" action="{{ route('admin.expenses.index') }}" class="d-flex flex-column flex-sm-row gap-2">
-                    <div>
+                <form method="GET" action="{{ route('admin.expenses.index') }}" class="row g-2 align-items-end flex-grow-1" data-expense-filter-form>
+                    <div class="col-12 col-sm-4 col-lg-3">
+                        <label for="type" class="form-label fw-semibold">ফিল্টার টাইপ</label>
+                        <select name="type" id="type" class="form-select" data-expense-filter-type>
+                            <option value="monthly" @selected($filterType === 'monthly')>মাস অনুযায়ী</option>
+                            <option value="yearly" @selected($filterType === 'yearly')>বছর অনুযায়ী</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-4 col-lg-3 expense-filter expense-filter-monthly">
                         <label for="month" class="form-label fw-semibold">মাস নির্বাচন করুন</label>
                         <input type="month" id="month" name="month" value="{{ $selectedMonth }}" class="form-control">
                     </div>
-                    <div class="d-flex align-items-end">
+                    <div class="col-12 col-sm-4 col-lg-3 expense-filter expense-filter-yearly">
+                        <label for="year" class="form-label fw-semibold">বছর নির্বাচন করুন</label>
+                        <input type="number" id="year" name="year" value="{{ $selectedYear }}" min="2000" max="2100" class="form-control">
+                    </div>
+                    <div class="col-12 col-sm-4 col-lg-3">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="fa-solid fa-filter me-1"></i> ফিল্টার
                         </button>
@@ -20,7 +31,7 @@
                 </form>
 
                 <div class="text-md-end">
-                    <p class="mb-2 text-secondary">নির্বাচিত মাসের মোট খরচ</p>
+                    <p class="mb-2 text-secondary">{{ $filterType === 'yearly' ? 'নির্বাচিত বছরের মোট খরচ' : 'নির্বাচিত মাসের মোট খরচ' }}</p>
                     <h3 class="fw-black mb-3">৳ {{ number_format((float) $totalAmount, 2) }}</h3>
                     <a href="{{ route('admin.expenses.create', ['month' => $selectedMonth]) }}" class="btn btn-success">
                         <i class="fa-solid fa-plus me-1"></i> নতুন খরচ যোগ করুন
@@ -41,7 +52,7 @@
             <div class="d-flex align-items-center justify-content-between">
                 <div>
                     <h3 class="card-title fw-bold">খরচের বিস্তারিত</h3>
-                    <p class="text-secondary mb-0">মাসভিত্তিক সকল খরচ এখানে দেখাবে।</p>
+                    <p class="text-secondary mb-0">{{ $filterType === 'yearly' ? $selectedYear.' সালের সকল খরচ এখানে দেখাবে।' : 'মাসভিত্তিক সকল খরচ এখানে দেখাবে।' }}</p>
                 </div>
                 <a href="{{ route('admin.expenses.create', ['month' => $selectedMonth]) }}" class="btn btn-primary btn-sm">
                     <i class="fa-solid fa-plus me-1"></i> Add
@@ -101,7 +112,7 @@
                         @empty
                             <tr>
                                 <td colspan="8" class="py-5 text-center text-secondary">
-                                    এই মাসে কোনো খরচ যোগ করা হয়নি।
+                                    {{ $filterType === 'yearly' ? 'এই বছরে কোনো খরচ যোগ করা হয়নি।' : 'এই মাসে কোনো খরচ যোগ করা হয়নি।' }}
                                 </td>
                             </tr>
                         @endforelse
@@ -162,7 +173,7 @@
                 @empty
                     <div class="mobile-list-empty">
                         <i class="fa-solid fa-receipt"></i>
-                        <p>এই মাসে কোনো খরচ যোগ করা হয়নি।</p>
+                        <p>{{ $filterType === 'yearly' ? 'এই বছরে কোনো খরচ যোগ করা হয়নি।' : 'এই মাসে কোনো খরচ যোগ করা হয়নি।' }}</p>
                     </div>
                 @endforelse
             </div>
@@ -174,4 +185,19 @@
             </div>
         @endif
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterType = document.querySelector('[data-expense-filter-type]');
+            const filters = document.querySelectorAll('.expense-filter');
+
+            const toggleFilters = () => {
+                filters.forEach((filter) => filter.classList.add('d-none'));
+                document.querySelector(`.expense-filter-${filterType.value}`)?.classList.remove('d-none');
+            };
+
+            filterType.addEventListener('change', toggleFilters);
+            toggleFilters();
+        });
+    </script>
 @endsection

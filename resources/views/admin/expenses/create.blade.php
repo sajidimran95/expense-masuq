@@ -68,7 +68,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">টাকার পরিমাণ <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" min="0" name="expenses[{{ $index }}][amount]" value="{{ $expense['amount'] ?? '' }}" class="form-control" placeholder="৳" required>
+                                <input type="text" inputmode="decimal" name="expenses[{{ $index }}][amount]" value="{{ $expense['amount'] ?? '' }}" class="form-control" placeholder="৳ ১২৩৪.৫০ / 1234.50" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">ভাউচার নং</label>
@@ -133,7 +133,7 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">টাকার পরিমাণ <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" min="0" data-name="amount" class="form-control" placeholder="৳" required>
+                        <input type="text" inputmode="decimal" data-name="amount" class="form-control" placeholder="৳ ১২৩৪.৫০ / 1234.50" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">ভাউচার নং</label>
