@@ -25,3 +25,96 @@
     border-radius: 1rem;
     box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 }
+
+.mobile-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 575.98px) {
+    .app-wrapper {
+        padding-bottom: 5.25rem;
+    }
+
+    .app-header .navbar-nav .nav-link {
+        padding-inline: 0.6rem;
+    }
+
+    .app-content-header {
+        padding-block: 0.85rem;
+    }
+
+    .app-content-header h3 {
+        font-size: 1.15rem;
+        font-weight: 800;
+    }
+
+    .breadcrumb {
+        display: none;
+    }
+
+    .small-box {
+        border-radius: 1rem;
+    }
+
+    .small-box .inner {
+        padding: 1rem;
+    }
+
+    .small-box h3 {
+        font-size: 1.45rem;
+    }
+
+    .expense-card {
+        border-radius: 1rem;
+    }
+
+    .expense-card .card-header,
+    .expense-card .card-body {
+        padding: 1rem;
+    }
+
+    .table {
+        font-size: 0.875rem;
+    }
+
+    .mobile-bottom-nav {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        left: 1rem;
+        z-index: 1040;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.25rem;
+        padding: 0.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 1.75rem;
+        background: rgba(15, 23, 42, 0.92);
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.38);
+        backdrop-filter: blur(18px);
+    }
+
+    .mobile-bottom-nav a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.2rem;
+        min-height: 3.2rem;
+        border-radius: 1.25rem;
+        color: rgba(226, 232, 240, 0.82);
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .mobile-bottom-nav i {
+        font-size: 1rem;
+    }
+
+    .mobile-bottom-nav a.active {
+        color: #ffffff;
+        background: #2563eb;
+        box-shadow: 0 10px 24px rgba(37, 99, 235, 0.35);
+    }
+}

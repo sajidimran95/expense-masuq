@@ -6,8 +6,8 @@
     <title>অ্যাডমিন লগইন | {{ config('app.name', 'খরচ হিসাব') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-900 antialiased">
-    <main class="grid min-h-screen lg:grid-cols-[1fr_520px]">
+<body class="min-h-screen bg-slate-950 pb-24 text-slate-900 antialiased sm:pb-0">
+    <main class="grid min-h-[100svh] bg-slate-100 lg:grid-cols-[1fr_520px]">
         <section class="relative hidden overflow-hidden bg-slate-900 p-12 text-white lg:block">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_rgba(37,99,235,0.35),_transparent_30%),radial-gradient(circle_at_70%_80%,_rgba(34,197,94,0.25),_transparent_28%)]"></div>
             <div class="relative flex h-full flex-col justify-between">
@@ -31,19 +31,22 @@
             </div>
         </section>
 
-        <section class="flex items-center justify-center bg-slate-100 px-6 py-12">
-            <div class="w-full max-w-md">
-                <div class="mb-8 lg:hidden">
-                    <a href="{{ route('home') }}" class="flex items-center gap-3">
-                        <img src="{{ asset('images/expense-logo.svg') }}" alt="খরচ হিসাব লোগো" class="h-11 w-11 rounded-2xl">
-                        <span class="text-lg font-bold text-slate-950">Expense Management</span>
+        <section class="relative flex items-center justify-center overflow-hidden bg-slate-100 px-4 py-5 sm:px-6 sm:py-12">
+            <div class="absolute inset-x-0 top-0 h-64 bg-gradient-to-br from-blue-600 via-blue-500 to-emerald-400 lg:hidden"></div>
+            <div class="absolute inset-x-0 top-0 h-64 bg-[url('/images/admin-login-expense-photo.jpg')] bg-cover bg-center opacity-20 lg:hidden"></div>
+
+            <div class="relative w-full max-w-md">
+                <div class="mb-6 lg:hidden">
+                    <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-full border border-white/20 bg-white/20 p-2 pr-4 shadow-xl backdrop-blur-md">
+                        <img src="{{ asset('images/expense-logo.svg') }}" alt="খরচ হিসাব লোগো" class="h-10 w-10 rounded-2xl">
+                        <span class="truncate text-base font-bold text-white">Expense Management</span>
                     </a>
                 </div>
 
-                <div class="rounded-[2rem] bg-white p-8 shadow-2xl shadow-slate-900/10">
-                    <div class="mb-8">
+                <div class="rounded-[2rem] bg-white p-5 shadow-2xl shadow-slate-900/15 sm:p-8">
+                    <div class="mb-6 sm:mb-8">
                         <p class="text-sm font-semibold uppercase tracking-[0.25em] text-blue-600">অ্যাডমিন লগইন</p>
-                        <h2 class="mt-3 text-3xl font-black text-slate-950">স্বাগতম</h2>
+                        <h2 class="mt-3 text-2xl font-black text-slate-950 sm:text-3xl">স্বাগতম</h2>
                         <p class="mt-2 text-sm text-slate-500">চালিয়ে যেতে আপনার অ্যাডমিন অ্যাকাউন্ট ব্যবহার করুন।</p>
                     </div>
 
@@ -59,24 +62,24 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('admin.login.store') }}" class="space-y-5">
+                    <form method="POST" action="{{ route('admin.login.store') }}" class="space-y-4 sm:space-y-5">
                         @csrf
 
                         <div>
                             <label for="email" class="mb-2 block text-sm font-bold text-slate-700">ইমেইল ঠিকানা</label>
                             <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus
-                                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
                                 placeholder="admin@example.com">
                         </div>
 
                         <div>
                             <label for="password" class="mb-2 block text-sm font-bold text-slate-700">পাসওয়ার্ড</label>
                             <input id="password" name="password" type="password" required
-                                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
                                 placeholder="password">
                         </div>
 
-                        <div class="flex items-center justify-between">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
                             <label class="flex items-center gap-2 text-sm font-medium text-slate-600">
                                 <input type="checkbox" name="remember" class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
                                 আমাকে মনে রাখুন
@@ -95,6 +98,21 @@
                 </div>
             </div>
         </section>
+
+        <nav class="fixed inset-x-4 bottom-4 z-50 grid grid-cols-2 rounded-[2rem] border border-white/10 bg-slate-950/90 p-2 text-xs font-bold text-slate-300 shadow-2xl shadow-slate-950/50 backdrop-blur-xl sm:hidden">
+            <a href="{{ route('home') }}" class="flex flex-col items-center gap-1 rounded-3xl px-3 py-2 transition hover:bg-white/10 hover:text-white">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-8.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+                হোম
+            </a>
+            <a href="{{ route('admin.login') }}" class="flex flex-col items-center gap-1 rounded-3xl bg-blue-600 px-3 py-2 text-white">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 9a7 7 0 0 0-14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                লগইন
+            </a>
+        </nav>
     </main>
 </body>
 </html>

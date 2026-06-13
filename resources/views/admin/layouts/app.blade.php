@@ -109,6 +109,25 @@
             <strong>{{ config('app.name', 'খরচ হিসাব') }}</strong>
             <span class="float-end d-none d-sm-inline">খরচ ড্যাশবোর্ড</span>
         </footer>
+
+        <nav class="mobile-bottom-nav">
+            <a href="{{ route('admin.dashboard') }}" class="active">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>ড্যাশবোর্ড</span>
+            </a>
+            <a href="#">
+                <i class="fa-solid fa-receipt"></i>
+                <span>ক্লেইম</span>
+            </a>
+            <a href="#">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>রিপোর্ট</span>
+            </a>
+            <a href="#">
+                <i class="fa-solid fa-wallet"></i>
+                <span>বাজেট</span>
+            </a>
+        </nav>
     </div>
 </body>
 </html>
