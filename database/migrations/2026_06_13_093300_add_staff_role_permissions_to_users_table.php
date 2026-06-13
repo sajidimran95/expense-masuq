@@ -19,7 +19,7 @@ return new class extends Migration
             ->where('is_admin', true)
             ->update([
                 'role' => 'super_admin',
-                'permissions' => json_encode(['expenses', 'reports', 'settings', 'staff']),
+                'permissions' => json_encode(['expenses', 'reports', 'settings', 'staff', 'audit_logs']),
                 'is_active' => true,
             ]);
     }

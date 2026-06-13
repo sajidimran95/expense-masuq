@@ -341,6 +341,23 @@
     font-weight: 800;
 }
 
+.audit-values {
+    max-width: 26rem;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    overflow: auto;
+    border-radius: 0.75rem;
+    background: #0f172a;
+    color: #dbeafe;
+    font-size: 0.75rem;
+}
+
+.audit-values pre,
+pre.audit-values {
+    margin-bottom: 0;
+    white-space: pre-wrap;
+}
+
 .mobile-list {
     display: grid;
     gap: 0.85rem;

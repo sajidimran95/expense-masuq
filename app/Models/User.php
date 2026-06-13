@@ -43,6 +43,7 @@ class User extends Authenticatable
             'reports' => 'রিপোর্ট দেখা',
             'settings' => 'Website Settings',
             'staff' => 'Staff/User ম্যানেজ',
+            'audit_logs' => 'Audit Log দেখা',
         ];
     }
 

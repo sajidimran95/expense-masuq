@@ -75,7 +75,7 @@
                                 </a>
                             </li>
                         @endif
-                        @if (auth()->user()->canAccess('staff') || auth()->user()->canAccess('settings'))
+                        @if (auth()->user()->canAccess('staff') || auth()->user()->canAccess('settings') || auth()->user()->canAccess('audit_logs'))
                             <li class="nav-header">ম্যানেজমেন্ট</li>
                         @endif
                         @if (auth()->user()->canAccess('staff'))
@@ -91,6 +91,14 @@
                                 <a href="{{ route('admin.settings.edit') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
                                     <i class="nav-icon fa-solid fa-gear"></i>
                                     <p>সেটিংস</p>
+                                </a>
+                            </li>
+                        @endif
+                        @if (auth()->user()->canAccess('audit_logs'))
+                            <li class="nav-item">
+                                <a href="{{ route('admin.audit-logs.index') }}" class="nav-link {{ request()->routeIs('admin.audit-logs.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fa-solid fa-clock-rotate-left"></i>
+                                    <p>Audit Logs</p>
                                 </a>
                             </li>
                         @endif
@@ -149,6 +157,11 @@
                 <a href="{{ route('admin.staff.index') }}" class="{{ request()->routeIs('admin.staff.*') ? 'active' : '' }}">
                     <i class="fa-solid fa-users-gear"></i>
                     <span>Staff</span>
+                </a>
+            @elseif (auth()->user()->canAccess('audit_logs'))
+                <a href="{{ route('admin.audit-logs.index') }}" class="{{ request()->routeIs('admin.audit-logs.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Logs</span>
                 </a>
             @elseif (auth()->user()->canAccess('settings'))
                 <a href="{{ route('admin.settings.edit') }}" class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">

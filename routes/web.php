@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\ReportController;
@@ -52,6 +53,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('staff/{staff}/edit', [StaffController::class, 'edit'])->name('staff.edit');
             Route::put('staff/{staff}', [StaffController::class, 'update'])->name('staff.update');
             Route::delete('staff/{staff}', [StaffController::class, 'destroy'])->name('staff.destroy');
+        });
+
+        Route::middleware('permission:audit_logs')->group(function () {
+            Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
         });
 
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');

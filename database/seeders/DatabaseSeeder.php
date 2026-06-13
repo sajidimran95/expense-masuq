@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'is_admin' => true,
             'role' => 'super_admin',
-            'permissions' => ['expenses', 'reports', 'settings', 'staff'],
+            'permissions' => ['expenses', 'reports', 'settings', 'staff', 'audit_logs'],
             'is_active' => true,
         ]);
 
