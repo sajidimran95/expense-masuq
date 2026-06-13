@@ -50,7 +50,7 @@
         </div>
 
         <div class="card-body p-0">
-            <div class="table-responsive">
+            <div class="table-responsive d-none d-md-block">
                 <table class="table align-middle mb-0">
                     <thead class="table-light">
                         <tr>
@@ -107,6 +107,64 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <div class="mobile-list d-md-none">
+                @forelse ($expenses as $expense)
+                    <div class="mobile-list-card">
+                        <div class="mobile-list-top">
+                            <div class="mobile-list-icon">
+                                <i class="fa-solid fa-receipt"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between gap-2">
+                                    <div>
+                                        <span class="mobile-list-serial">#{{ $expenses->firstItem() + $loop->index }}</span>
+                                        <h4>{{ $expense->sector }}</h4>
+                                    </div>
+                                    <strong>{{ $expense->formatted_amount }}</strong>
+                                </div>
+                                <p class="expense-description-preview">{!! $expense->description !!}</p>
+                            </div>
+                        </div>
+
+                        <div class="mobile-list-meta">
+                            <span><i class="fa-regular fa-calendar me-1"></i>{{ $expense->expense_date->format('d-m-Y') }}</span>
+                            <span><i class="fa-solid fa-ticket me-1"></i>{{ $expense->voucher_no ?: 'ভাউচার নেই' }}</span>
+                            <span class="{{ $expense->approval ? 'text-success' : 'text-secondary' }}">
+                                <i class="fa-solid fa-signature me-1"></i>{{ $expense->approval ? 'অনুমোদন আছে' : 'অনুমোদন নেই' }}
+                            </span>
+                        </div>
+
+                        @if ($expense->approval)
+                            <div class="mobile-signature-box">
+                                <span>অনুমোদন</span>
+                                <img src="{{ asset($expense->approval) }}" alt="অনুমোদন signature" class="expense-signature-preview">
+                            </div>
+                        @endif
+
+                        <div class="mobile-list-actions">
+                            <a href="{{ route('admin.expenses.show', $expense) }}" class="btn btn-info btn-sm text-white">
+                                <i class="fa-solid fa-eye me-1"></i> View
+                            </a>
+                            <a href="{{ route('admin.expenses.edit', $expense) }}" class="btn btn-warning btn-sm text-white">
+                                <i class="fa-solid fa-pen-to-square me-1"></i> Edit
+                            </a>
+                            <form method="POST" action="{{ route('admin.expenses.destroy', $expense) }}" onsubmit="return confirm('আপনি কি এই খরচটি মুছে ফেলতে চান?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fa-solid fa-trash me-1"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div class="mobile-list-empty">
+                        <i class="fa-solid fa-receipt"></i>
+                        <p>এই মাসে কোনো খরচ যোগ করা হয়নি।</p>
+                    </div>
+                @endforelse
             </div>
         </div>
 

@@ -287,6 +287,115 @@
     padding: 0.25rem;
 }
 
+.mobile-list {
+    display: grid;
+    gap: 0.85rem;
+    padding: 1rem;
+    background: #f8fafc;
+}
+
+.mobile-list-card {
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.25rem;
+    background: #ffffff;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.mobile-list-top {
+    display: flex;
+    gap: 0.85rem;
+}
+
+.mobile-list-icon {
+    display: grid;
+    width: 2.7rem;
+    height: 2.7rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 1rem;
+    color: #2563eb;
+    background: #dbeafe;
+}
+
+.mobile-list-serial {
+    display: inline-flex;
+    margin-bottom: 0.25rem;
+    color: #64748b;
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+.mobile-list-card h4 {
+    margin-bottom: 0.35rem;
+    color: #0f172a;
+    font-size: 1rem;
+    font-weight: 900;
+}
+
+.mobile-list-card strong {
+    color: #16a34a;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.mobile-list-card p {
+    margin-bottom: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.mobile-list-meta {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 0.85rem;
+    padding: 0.75rem;
+    border-radius: 1rem;
+    color: #64748b;
+    background: #f8fafc;
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.mobile-signature-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.85rem;
+    padding: 0.65rem 0.75rem;
+    border: 1px dashed #cbd5e1;
+    border-radius: 1rem;
+    background: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 900;
+}
+
+.mobile-list-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+}
+
+.mobile-list-actions .btn,
+.mobile-list-actions form,
+.mobile-list-actions button {
+    width: 100%;
+}
+
+.mobile-list-empty {
+    padding: 2rem 1rem;
+    color: #64748b;
+    text-align: center;
+}
+
+.mobile-list-empty i {
+    margin-bottom: 0.75rem;
+    color: #94a3b8;
+    font-size: 2rem;
+}
+
 @media (max-width: 575.98px) {
     .app-wrapper {
         padding-bottom: 5.25rem;
@@ -354,6 +463,10 @@
         padding: 1rem;
     }
 
+    .expense-card .card-body.p-0 {
+        padding: 0;
+    }
+
     .dashboard-expense-item {
         padding: 1rem;
     }
@@ -375,6 +488,18 @@
 
     .table {
         font-size: 0.875rem;
+    }
+
+    .mobile-list {
+        padding: 0.85rem;
+    }
+
+    .mobile-list-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mobile-list-actions form:last-child {
+        grid-column: 1 / -1;
     }
 
     .mobile-bottom-nav {
