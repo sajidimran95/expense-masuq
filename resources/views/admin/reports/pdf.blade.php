@@ -16,18 +16,21 @@
         }
 
         h2 {
-            margin: 22px 0 8px;
+            margin: 18px 0 8px;
             padding: 8px 10px;
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: bold;
             text-align: center;
             background: #dbeafe;
             border: 1px solid #93c5fd;
         }
 
         .meta {
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             text-align: center;
             color: #4b5563;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         table {
@@ -105,11 +108,12 @@
     </style>
 </head>
 <body>
-    <h1>Expense Management</h1>
-    <div class="meta">{{ $reportTitle }}</div>
+    @if ($reportType === 'yearly')
+        <div class="meta">{{ $reportTitle }}</div>
+    @endif
 
     @forelse ($groups as $month => $expenses)
-        <h2>{{ $monthLabel($month) }}</h2>
+        <h2>{{ $reportType === 'yearly' ? $monthLabel($month) : $reportTitle }}</h2>
 
         <table>
             <thead>

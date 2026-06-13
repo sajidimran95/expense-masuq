@@ -134,11 +134,11 @@ class ReportController extends Controller
         $selectedYear = $request->query('year', now()->format('Y'));
 
         if ($reportType === 'date') {
-            $reportTitle = date('d-m-Y', strtotime($selectedDate)).' তারিখের রিপোর্ট';
+            $reportTitle = $this->banglaNumber(date('d-m-Y', strtotime($selectedDate))).' তারিখের রিপোর্ট';
         } elseif ($reportType === 'yearly') {
-            $reportTitle = $selectedYear.' সালের রিপোর্ট';
+            $reportTitle = $this->banglaNumber($selectedYear).' সালের রিপোর্ট';
         } else {
-            $reportTitle = $this->monthLabel($selectedMonth);
+            $reportTitle = $this->monthLabel($selectedMonth).' মাসের রিপোর্ট';
         }
 
         return compact('reportType', 'selectedMonth', 'selectedDate', 'selectedYear', 'reportTitle');
@@ -182,7 +182,23 @@ class ReportController extends Controller
 
     private function monthLabel(string $month): string
     {
-        return Carbon::createFromFormat('Y-m', $month)->format('F-Y');
+        $date = Carbon::createFromFormat('Y-m', $month);
+        $months = [
+            'January' => 'জানুয়ারি',
+            'February' => 'ফেব্রুয়ারি',
+            'March' => 'মার্চ',
+            'April' => 'এপ্রিল',
+            'May' => 'মে',
+            'June' => 'জুন',
+            'July' => 'জুলাই',
+            'August' => 'আগস্ট',
+            'September' => 'সেপ্টেম্বর',
+            'October' => 'অক্টোবর',
+            'November' => 'নভেম্বর',
+            'December' => 'ডিসেম্বর',
+        ];
+
+        return $months[$date->format('F')].'-'.$this->banglaNumber($date->format('Y'));
     }
 
     private function cleanPdfDescription(string $description): string
