@@ -78,6 +78,9 @@
                     <a href="{{ route('admin.reports.export.csv', request()->query()) }}" class="btn btn-outline-success">
                         <i class="fa-solid fa-file-csv me-1"></i> CSV Export
                     </a>
+                    <a href="{{ route('admin.reports.export.excel', request()->query()) }}" class="btn btn-success">
+                        <i class="fa-solid fa-file-excel me-1"></i> Excel Export
+                    </a>
                     <a href="{{ route('admin.reports.export.pdf', request()->query()) }}" class="btn btn-outline-danger">
                         <i class="fa-solid fa-file-pdf me-1"></i> PDF Export
                     </a>

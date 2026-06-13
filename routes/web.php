@@ -26,6 +26,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
         Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('reports/export/csv', [ReportController::class, 'exportCsv'])->name('reports.export.csv');
+        Route::get('reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
         Route::get('reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     });

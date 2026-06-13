@@ -122,6 +122,24 @@ class ReportController extends Controller
         ]);
     }
 
+    public function exportExcel(Request $request): Response
+    {
+        $data = $this->reportData($request);
+        $groups = $this->groupedExpenses($data);
+        $html = view('admin.reports.excel', array_merge($data, [
+            'groups' => $groups,
+            'grandTotal' => $this->grandTotal($groups),
+            'monthLabel' => fn (string $month): string => $this->monthLabel($month),
+            'cleanDescription' => fn (string $description): string => strip_tags($description),
+            'bn' => fn (string|int|float $value): string => $this->banglaNumber($value),
+        ]))->render();
+
+        return response($html, 200, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="expense-report-'.$data['reportType'].'-'.now()->format('YmdHis').'.xls"',
+        ]);
+    }
+
     /**
      * @return array{reportType: string, selectedMonth: string, selectedDate: string, selectedYear: string, reportTitle: string}
      */
