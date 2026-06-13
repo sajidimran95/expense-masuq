@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'খরচ হিসাব') }}</title>
+    <meta name="description" content="{{ $siteSetting->description() }}">
+    <title>{{ $siteSetting->title() }}</title>
+    <link rel="icon" href="{{ $siteSetting->faviconUrl() }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-950 pb-24 text-white antialiased sm:pb-0">
@@ -15,8 +17,7 @@
         <section class="relative mx-auto flex min-h-[100svh] max-w-7xl flex-col px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
             <nav class="flex items-center justify-between gap-3 rounded-full border border-white/10 bg-slate-950/35 p-2 pr-3 shadow-xl backdrop-blur-md sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-0">
                 <a href="{{ route('home') }}" class="flex min-w-0 items-center gap-2 sm:gap-3">
-                    <img src="{{ asset('images/expense-logo.svg') }}" alt="খরচ হিসাব লোগো" class="h-10 w-10 rounded-2xl shadow-lg shadow-blue-500/30 sm:h-11 sm:w-11">
-                    <span class="truncate text-sm font-semibold tracking-tight sm:text-lg">Expense Management</span>
+                    <img src="{{ $siteSetting->logoUrl() }}" alt="{{ $siteSetting->company_name }} logo" class="h-11 max-w-44 rounded-2xl object-contain shadow-lg shadow-blue-500/30 sm:h-14 sm:max-w-56">
                 </a>
 
                 <a href="{{ route('admin.login') }}" class="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-500 sm:px-5 sm:text-sm">

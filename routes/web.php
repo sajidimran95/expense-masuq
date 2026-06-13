@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,6 +29,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('reports/export/csv', [ReportController::class, 'exportCsv'])->name('reports.export.csv');
         Route::get('reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.export.excel');
         Route::get('reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
+        Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');
+        Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     });
 });

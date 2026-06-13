@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'অ্যাডমিন প্যানেল') | {{ config('app.name', 'খরচ হিসাব') }}</title>
+    <meta name="description" content="{{ $siteSetting->description() }}">
+    <title>@yield('title', 'অ্যাডমিন প্যানেল') | {{ $siteSetting->title() }}</title>
+    <link rel="icon" href="{{ $siteSetting->faviconUrl() }}">
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 </head>
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -43,8 +45,7 @@
         <aside class="app-sidebar shadow" data-bs-theme="dark">
             <div class="sidebar-brand">
                 <a href="{{ route('admin.dashboard') }}" class="brand-link text-decoration-none">
-                    <img src="{{ asset('images/expense-logo.svg') }}" alt="খরচ হিসাব লোগো" class="brand-image rounded">
-                    <span class="brand-text fw-bold ms-2">Expense Management</span>
+                    <img src="{{ $siteSetting->logoUrl() }}" alt="{{ $siteSetting->company_name }} logo" class="brand-image rounded">
                 </a>
             </div>
 
@@ -71,9 +72,9 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa-solid fa-wallet"></i>
-                                <p>বাজেট</p>
+                            <a href="{{ route('admin.settings.edit') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                                <i class="nav-icon fa-solid fa-gear"></i>
+                                <p>সেটিংস</p>
                             </a>
                         </li>
                     </ul>
@@ -106,7 +107,7 @@
         </main>
 
         <footer class="app-footer">
-            <strong>{{ config('app.name', 'খরচ হিসাব') }}</strong>
+            <strong>{{ $siteSetting->company_name }}</strong>
             <span class="float-end d-none d-sm-inline">খরচ ড্যাশবোর্ড</span>
         </footer>
 
@@ -123,9 +124,9 @@
                 <i class="fa-solid fa-chart-pie"></i>
                 <span>রিপোর্ট</span>
             </a>
-            <a href="#">
-                <i class="fa-solid fa-wallet"></i>
-                <span>বাজেট</span>
+            <a href="{{ route('admin.settings.edit') }}" class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-gear"></i>
+                <span>সেটিংস</span>
             </a>
         </nav>
     </div>

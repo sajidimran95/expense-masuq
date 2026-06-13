@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>অ্যাডমিন লগইন | {{ config('app.name', 'খরচ হিসাব') }}</title>
+    <meta name="description" content="{{ $siteSetting->description() }}">
+    <title>অ্যাডমিন লগইন | {{ $siteSetting->title() }}</title>
+    <link rel="icon" href="{{ $siteSetting->faviconUrl() }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-950 pb-24 text-slate-900 antialiased sm:pb-0">
@@ -12,8 +14,7 @@
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_rgba(37,99,235,0.35),_transparent_30%),radial-gradient(circle_at_70%_80%,_rgba(34,197,94,0.25),_transparent_28%)]"></div>
             <div class="relative flex h-full flex-col justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-3">
-                    <img src="{{ asset('images/expense-logo.svg') }}" alt="খরচ হিসাব লোগো" class="h-12 w-12 rounded-2xl shadow-lg shadow-blue-500/30">
-                    <span class="text-xl font-bold">Expense Management</span>
+                    <img src="{{ $siteSetting->logoUrl() }}" alt="{{ $siteSetting->company_name }} logo" class="h-12 w-12 rounded-2xl shadow-lg shadow-blue-500/30">
                 </a>
 
                 <div>
@@ -38,8 +39,7 @@
             <div class="relative w-full max-w-md">
                 <div class="mb-6 lg:hidden">
                     <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-full border border-white/20 bg-white/20 p-2 pr-4 shadow-xl backdrop-blur-md">
-                        <img src="{{ asset('images/expense-logo.svg') }}" alt="খরচ হিসাব লোগো" class="h-10 w-10 rounded-2xl">
-                        <span class="truncate text-base font-bold text-white">Expense Management</span>
+                        <img src="{{ $siteSetting->logoUrl() }}" alt="{{ $siteSetting->company_name }} logo" class="h-10 w-10 rounded-2xl">
                     </a>
                 </div>
 

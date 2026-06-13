@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -22,6 +23,14 @@ class DatabaseSeeder extends Seeder
             'name' => 'খরচ অ্যাডমিন',
             'password' => Hash::make('password'),
             'is_admin' => true,
+        ]);
+
+        SiteSetting::query()->firstOrCreate([], [
+            'company_name' => 'Expense Management',
+            'logo' => 'images/expense-logo.svg',
+            'favicon' => 'images/expense-logo.svg',
+            'meta_title' => 'Expense Management',
+            'meta_description' => 'দৈনিক ও মাসিক খরচ, রিপোর্ট এবং অনুমোদন সহজে ম্যানেজ করার সফটওয়্যার।',
         ]);
     }
 }
