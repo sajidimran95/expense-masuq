@@ -47,6 +47,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('admin.login')->with('status', 'আপনি সফলভাবে লগআউট করেছেন।');
+        return redirect()->route('home')->with('status', 'আপনি সফলভাবে লগআউট করেছেন।');
     }
 }
