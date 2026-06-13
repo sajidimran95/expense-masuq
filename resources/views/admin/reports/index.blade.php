@@ -44,6 +44,16 @@
                 </div>
 
                 <div class="col-md-3">
+                    <label for="sector" class="form-label fw-bold">খাত অনুযায়ী</label>
+                    <select name="sector" id="sector" class="form-select">
+                        <option value="">সব খাত</option>
+                        @foreach ($sectors as $sector)
+                            <option value="{{ $sector }}" @selected($selectedSector === $sector)>{{ $sector }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-3">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fa-solid fa-magnifying-glass me-1"></i> রিপোর্ট দেখুন
                     </button>

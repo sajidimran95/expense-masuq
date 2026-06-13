@@ -30,6 +30,7 @@ class ReportController extends Controller
             'expenses' => $expenses,
             'totalAmount' => (clone $query)->sum('amount'),
             'totalEntries' => (clone $query)->count(),
+            'sectors' => Expense::query()->select('sector')->distinct()->orderBy('sector')->pluck('sector'),
         ]));
     }
 
@@ -150,6 +151,7 @@ class ReportController extends Controller
         $selectedStartDate = $request->query('start_date', now()->startOfMonth()->toDateString());
         $selectedEndDate = $request->query('end_date', now()->toDateString());
         $selectedYear = $request->query('year', now()->format('Y'));
+        $selectedSector = trim((string) $request->query('sector', ''));
 
         if ($reportType === 'all') {
             $reportTitle = 'সকল খরচের রিপোর্ট';
@@ -172,12 +174,20 @@ class ReportController extends Controller
             $reportTitle = $this->monthLabel($selectedMonth).' মাসের রিপোর্ট';
         }
 
-        return compact('reportType', 'selectedMonth', 'selectedDate', 'selectedStartDate', 'selectedEndDate', 'selectedYear', 'reportTitle');
+        if ($selectedSector !== '') {
+            $reportTitle .= ' - '.$selectedSector;
+        }
+
+        return compact('reportType', 'selectedMonth', 'selectedDate', 'selectedStartDate', 'selectedEndDate', 'selectedYear', 'selectedSector', 'reportTitle');
     }
 
     private function filteredQuery(array $data): \Illuminate\Database\Eloquent\Builder
     {
         $query = Expense::query();
+
+        if (($data['selectedSector'] ?? '') !== '') {
+            $query->where('sector', $data['selectedSector']);
+        }
 
         if ($data['reportType'] === 'all') {
             return $query;
@@ -236,23 +246,30 @@ class ReportController extends Controller
 
     private function exportFileName(array $data, string $extension): string
     {
+        $sector = ($data['selectedSector'] ?? '') !== '' ? '-'.$this->safeFilePart($data['selectedSector']) : '';
+
         if ($data['reportType'] === 'all') {
-            return 'সকল-খরচের-রিপোর্ট.'.$extension;
+            return 'সকল-খরচের-রিপোর্ট'.$sector.'.'.$extension;
         }
 
         if ($data['reportType'] === 'yearly') {
-            return $this->banglaNumber($data['selectedYear']).'-সালের-রিপোর্ট.'.$extension;
+            return $this->banglaNumber($data['selectedYear']).'-সালের-রিপোর্ট'.$sector.'.'.$extension;
         }
 
         if ($data['reportType'] === 'date') {
-            return $this->banglaNumber(Carbon::parse($data['selectedDate'])->format('d-m-Y')).'-তারিখের-রিপোর্ট.'.$extension;
+            return $this->banglaNumber(Carbon::parse($data['selectedDate'])->format('d-m-Y')).'-তারিখের-রিপোর্ট'.$sector.'.'.$extension;
         }
 
         if ($data['reportType'] === 'date_range') {
-            return $this->banglaNumber(Carbon::parse($data['selectedStartDate'])->format('d-m-Y')).'-থেকে-'.$this->banglaNumber(Carbon::parse($data['selectedEndDate'])->format('d-m-Y')).'-রিপোর্ট.'.$extension;
+            return $this->banglaNumber(Carbon::parse($data['selectedStartDate'])->format('d-m-Y')).'-থেকে-'.$this->banglaNumber(Carbon::parse($data['selectedEndDate'])->format('d-m-Y')).'-রিপোর্ট'.$sector.'.'.$extension;
         }
 
-        return $this->monthLabel($data['selectedMonth']).'-মাসের-রিপোর্ট.'.$extension;
+        return $this->monthLabel($data['selectedMonth']).'-মাসের-রিপোর্ট'.$sector.'.'.$extension;
+    }
+
+    private function safeFilePart(string $value): string
+    {
+        return trim(preg_replace('/[\\\\\/:*?"<>|]+/', '-', $value), '- ');
     }
 
     private function downloadHeader(string $filename, string $fallback): string
