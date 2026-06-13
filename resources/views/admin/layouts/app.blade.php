@@ -52,16 +52,16 @@
                 <nav class="mt-2">
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu">
                         <li class="nav-item">
-                            <a href="{{ route('admin.dashboard') }}" class="nav-link active">
+                            <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-gauge-high"></i>
                                 <p>ড্যাশবোর্ড</p>
                             </a>
                         </li>
                         <li class="nav-header">খরচ</li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('admin.expenses.index') }}" class="nav-link {{ request()->routeIs('admin.expenses.*') ? 'active' : '' }}">
                                 <i class="nav-icon fa-solid fa-receipt"></i>
-                                <p>ক্লেইম</p>
+                                <p>খরচ তালিকা</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -111,13 +111,13 @@
         </footer>
 
         <nav class="mobile-bottom-nav">
-            <a href="{{ route('admin.dashboard') }}" class="active">
+            <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="fa-solid fa-gauge-high"></i>
                 <span>ড্যাশবোর্ড</span>
             </a>
-            <a href="#">
+            <a href="{{ route('admin.expenses.index') }}" class="{{ request()->routeIs('admin.expenses.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-receipt"></i>
-                <span>ক্লেইম</span>
+                <span>খরচ</span>
             </a>
             <a href="#">
                 <i class="fa-solid fa-chart-pie"></i>

@@ -13,7 +13,7 @@
                         <p>{{ $stat['label'] }}</p>
                     </div>
                     <i class="small-box-icon fa-solid {{ $stat['icon'] }}"></i>
-                    <a href="#" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                    <a href="{{ route('admin.expenses.index') }}" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
                         বিস্তারিত দেখুন <i class="fa-solid fa-arrow-circle-right ms-1"></i>
                     </a>
                 </div>
@@ -30,7 +30,7 @@
                             <h3 class="card-title fw-bold">সাম্প্রতিক খরচ</h3>
                             <p class="text-secondary mb-0">সর্বশেষ জমা দেওয়া খরচগুলো ফাইন্যান্স রিভিউয়ের অপেক্ষায় আছে।</p>
                         </div>
-                        <a href="#" class="btn btn-primary btn-sm">
+                        <a href="{{ route('admin.expenses.create') }}" class="btn btn-primary btn-sm">
                             <i class="fa-solid fa-plus me-1"></i> খরচ যোগ করুন
                         </a>
                     </div>

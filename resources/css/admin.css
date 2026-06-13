@@ -1,6 +1,7 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import '@fortawesome/fontawesome-free/css/all.min.css';
 @import 'admin-lte/dist/css/adminlte.min.css';
+@import 'quill/dist/quill.snow.css';
 
 :root {
     --expense-sidebar: #0f172a;
@@ -28,6 +29,32 @@
 
 .mobile-bottom-nav {
     display: none;
+}
+
+.expense-description-input {
+    display: none;
+}
+
+.expense-editor {
+    min-height: 9rem;
+    border-bottom-right-radius: 0.75rem;
+    border-bottom-left-radius: 0.75rem;
+    background: #ffffff;
+}
+
+.expense-editor .ql-editor {
+    min-height: 8rem;
+    font-size: 0.95rem;
+}
+
+.expense-editor-wrapper .ql-toolbar {
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+    background: #f8fafc;
+}
+
+.expense-description-preview p {
+    margin-bottom: 0.25rem;
 }
 
 @media (max-width: 575.98px) {
