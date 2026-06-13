@@ -72,7 +72,13 @@
                                 <td class="expense-description-preview">{!! $expense->description !!}</td>
                                 <td class="fw-bold">{{ $expense->formatted_amount }}</td>
                                 <td>{{ $expense->voucher_no ?: '-' }}</td>
-                                <td>{{ $expense->approval ?: '-' }}</td>
+                                <td>
+                                    @if ($expense->approval)
+                                        <img src="{{ asset($expense->approval) }}" alt="অনুমোদন signature" class="expense-signature-preview">
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>

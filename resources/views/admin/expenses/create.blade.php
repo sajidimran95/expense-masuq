@@ -5,8 +5,9 @@
 
 @section('content')
     @php
+        $defaultDate = old('expenses.0.expense_date', $selectedMonth.'-01');
         $oldExpenses = old('expenses', [[
-            'expense_date' => now()->toDateString(),
+            'expense_date' => $defaultDate,
             'sector' => '',
             'description' => '',
             'amount' => '',
@@ -15,20 +16,17 @@
         ]]);
     @endphp
 
-    <form method="POST" action="{{ route('admin.expenses.store') }}" id="expense-form">
+    <form method="POST" action="{{ route('admin.expenses.store') }}" id="expense-form" enctype="multipart/form-data">
         @csrf
 
         <div class="card expense-card mb-4">
             <div class="card-body">
                 <div class="row g-3 align-items-end">
-                    <div class="col-md-4">
-                        <label for="expense_month" class="form-label fw-bold">মাস নির্বাচন করুন</label>
-                        <input type="month" id="expense_month" name="expense_month" value="{{ old('expense_month', $selectedMonth) }}" class="form-control @error('expense_month') is-invalid @enderror" required>
-                        @error('expense_month')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <div class="col-md-6">
+                        <p class="mb-1 fw-bold">মাস অটো সেট হবে</p>
+                        <p class="mb-0 text-secondary">প্রতিটি খরচের তারিখ থেকে মাস অটোমেটিক যোগ হবে।</p>
                     </div>
-                    <div class="col-md-8 text-md-end">
+                    <div class="col-md-6 text-md-end">
                         <button type="button" class="btn btn-outline-primary" id="add-expense-row">
                             <i class="fa-solid fa-plus me-1"></i> আরেকটি খরচ যোগ করুন
                         </button>
@@ -86,7 +84,8 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">অনুমোদন</label>
-                                <input type="text" name="expenses[{{ $index }}][approval]" value="{{ $expense['approval'] ?? '' }}" class="form-control" placeholder="ঐচ্ছিক">
+                                <input type="file" name="expenses[{{ $index }}][approval]" class="form-control" accept=".png,.jpg,.jpeg,image/png,image/jpeg">
+                                <small class="text-secondary">PNG/JPG ছবি দিন</small>
                             </div>
                         </div>
                     </div>
@@ -96,7 +95,7 @@
 
         <div class="sticky-bottom mt-4 rounded-4 border bg-white p-3 shadow-sm">
             <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
-                <a href="{{ route('admin.expenses.index', ['month' => old('expense_month', $selectedMonth)]) }}" class="btn btn-outline-secondary">
+                <a href="{{ route('admin.expenses.index', ['month' => $selectedMonth]) }}" class="btn btn-outline-secondary">
                     <i class="fa-solid fa-arrow-left me-1"></i> তালিকায় ফিরুন
                 </a>
                 <button type="submit" class="btn btn-success">
@@ -145,7 +144,8 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">অনুমোদন</label>
-                        <input type="text" data-name="approval" class="form-control" placeholder="ঐচ্ছিক">
+                        <input type="file" data-name="approval" class="form-control" accept=".png,.jpg,.jpeg,image/png,image/jpeg">
+                        <small class="text-secondary">PNG/JPG ছবি দিন</small>
                     </div>
                 </div>
             </div>
