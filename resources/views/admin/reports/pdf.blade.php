@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <style>
         body {
-            font-family: notosansbengali, sans-serif;
+            font-family: kalpurush, sans-serif;
             font-size: 10.5px;
             color: #111827;
         }
@@ -58,7 +58,7 @@
         em,
         i,
         u {
-            font-family: notosansbengali, sans-serif;
+            font-family: kalpurush, sans-serif;
         }
 
         .ql-ui {

@@ -97,14 +97,15 @@ class ReportController extends Controller
                 storage_path('fonts'),
             ]),
             'fontdata' => $fontConfig['fontdata'] + [
-                'notosansbengali' => [
-                    'R' => 'NotoSansBengali-Regular.ttf',
-                    'B' => 'NotoSansBengali-Bold.ttf',
+                'kalpurush' => [
+                    'R' => 'kalpurush.ttf',
+                    'B' => 'kalpurush.ttf',
+                    'useOTL' => 0xFF,
                 ],
             ],
-            'default_font' => 'notosansbengali',
-            'autoScriptToLang' => true,
-            'autoLangToFont' => true,
+            'default_font' => 'kalpurush',
+            'autoScriptToLang' => false,
+            'autoLangToFont' => false,
             'margin_top' => 12,
             'margin_right' => 10,
             'margin_bottom' => 12,
