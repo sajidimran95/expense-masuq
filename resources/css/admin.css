@@ -1,0 +1,27 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import 'admin-lte/dist/css/adminlte.min.css';
+
+:root {
+    --expense-sidebar: #0f172a;
+}
+
+.app-sidebar {
+    background: linear-gradient(180deg, var(--expense-sidebar), #111827);
+}
+
+.brand-link,
+.sidebar-wrapper .nav-link {
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.sidebar-wrapper .nav-link.active {
+    background-color: rgba(59, 130, 246, 0.18);
+    color: #ffffff;
+}
+
+.expense-card {
+    border: 0;
+    border-radius: 1rem;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
