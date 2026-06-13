@@ -13,6 +13,7 @@ class DashboardController extends Controller
     {
         $currentMonth = now()->format('Y-m');
         $currentYear = now()->year;
+        $grandTotal = (float) Expense::sum('amount');
         $monthlyTotal = (float) Expense::where('expense_month', $currentMonth)->sum('amount');
         $yearlyTotal = (float) Expense::whereYear('expense_date', $currentYear)->sum('amount');
         $totalEntries = Expense::count();
@@ -26,14 +27,16 @@ class DashboardController extends Controller
 
         return view('admin.dashboard', [
             'stats' => [
+                ['label' => 'মোট খরচ', 'value' => $this->money($grandTotal), 'icon' => 'fa-sack-dollar', 'tone' => 'purple'],
                 ['label' => 'এই মাসের খরচ', 'value' => $this->money($monthlyTotal), 'icon' => 'fa-wallet', 'tone' => 'blue'],
                 ['label' => 'এই বছরের খরচ', 'value' => $this->money($yearlyTotal), 'icon' => 'fa-chart-line', 'tone' => 'green'],
                 ['label' => 'মোট এন্ট্রি', 'value' => $this->bn($totalEntries), 'icon' => 'fa-receipt', 'tone' => 'orange'],
-                ['label' => 'অনুমোদন আছে', 'value' => $this->bn($signatureCount), 'icon' => 'fa-signature', 'tone' => 'purple'],
+                ['label' => 'অনুমোদন আছে', 'value' => $this->bn($signatureCount), 'icon' => 'fa-signature', 'tone' => 'blue'],
             ],
             'recentExpenses' => $recentExpenses,
             'topSectors' => $topSectors,
             'currentMonthLabel' => $this->monthLabel($currentMonth),
+            'currentDateTimeLabel' => $this->dateTimeLabel(now()),
             'bn' => fn (string|int|float $value): string => $this->bn($value),
             'money' => fn (string|int|float $value): string => $this->money((float) $value),
         ]);
@@ -63,6 +66,21 @@ class DashboardController extends Controller
         ];
 
         return $months[$date->format('F')].' '.$this->bn($date->format('Y'));
+    }
+
+    private function dateTimeLabel(Carbon $date): string
+    {
+        $days = [
+            'Saturday' => 'শনিবার',
+            'Sunday' => 'রবিবার',
+            'Monday' => 'সোমবার',
+            'Tuesday' => 'মঙ্গলবার',
+            'Wednesday' => 'বুধবার',
+            'Thursday' => 'বৃহস্পতিবার',
+            'Friday' => 'শুক্রবার',
+        ];
+
+        return $days[$date->format('l')].', '.$this->monthLabel($date->format('Y-m')).' '.$this->bn($date->format('d')).', '.$this->bn($date->format('h:i A'));
     }
 
     private function bn(string|int|float $value): string

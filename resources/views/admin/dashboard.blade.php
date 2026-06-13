@@ -6,7 +6,7 @@
 @section('content')
     <div class="dashboard-hero expense-card mb-4">
         <div>
-            <span class="dashboard-kicker">{{ $currentMonthLabel }}</span>
+            <span class="dashboard-kicker">{{ $currentDateTimeLabel }}</span>
             <h2>খরচ ম্যানেজমেন্ট ড্যাশবোর্ড</h2>
             <p>মাসিক খরচ, রিপোর্ট, অনুমোদন এবং সাম্প্রতিক এন্ট্রি এক জায়গা থেকে দেখুন।</p>
         </div>
