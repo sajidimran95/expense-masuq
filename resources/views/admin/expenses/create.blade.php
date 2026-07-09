@@ -22,9 +22,12 @@
         <div class="card expense-card mb-4">
             <div class="card-body">
                 <div class="row g-3 align-items-end">
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <p class="mb-1 fw-bold">মাস অটো সেট হবে</p>
-                        <p class="mb-0 text-secondary">প্রতিটি খরচের তারিখ থেকে মাস অটোমেটিক যোগ হবে।</p>
+                        <p class="mb-0 text-secondary">প্রতিটি খরচের তারিখ থেকে মাস অটোমেটিক যোগ হবে। একসাথে সর্বোচ্চ <strong>{{ $maxBulkCreate }}টি</strong> খরচ যোগ করা যাবে (৪০–৫০টি পর্যন্ত নিরাপদে সেভ হবে)।</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <span class="badge text-bg-primary fs-6" id="expense-row-count">{{ count($oldExpenses) }} / {{ $maxBulkCreate }}</span>
                     </div>
                 </div>
             </div>
@@ -94,8 +97,8 @@
                     <button type="button" class="btn btn-outline-primary" id="add-expense-row">
                         <i class="fa-solid fa-plus me-1"></i> আরেকটি খরচ যোগ করুন
                     </button>
-                    <button type="submit" class="btn btn-success">
-                        <i class="fa-solid fa-floppy-disk me-1"></i> সব খরচ সেভ করুন
+                    <button type="submit" class="btn btn-success" id="save-expenses-btn">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> <span id="save-expenses-label">সব খরচ সেভ করুন</span>
                     </button>
                 </div>
             </div>
@@ -151,10 +154,25 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const MAX_ROWS = @json($maxBulkCreate);
+            const CHUNK_SIZE = @json($bulkChunkSize);
             const rows = document.querySelector('#expense-rows');
             const template = document.querySelector('#expense-row-template');
             const addButton = document.querySelector('#add-expense-row');
+            const form = document.querySelector('#expense-form');
+            const rowCountBadge = document.querySelector('#expense-row-count');
+            const saveButton = document.querySelector('#save-expenses-btn');
+            const saveLabel = document.querySelector('#save-expenses-label');
+            const csrfToken = form.querySelector('input[name="_token"]').value;
+            const indexUrl = @json(route('admin.expenses.index', ['month' => $selectedMonth]));
             const editors = new WeakMap();
+
+            const updateRowCount = () => {
+                const count = rows.querySelectorAll('.expense-entry').length;
+                rowCountBadge.textContent = `${count} / ${MAX_ROWS}`;
+                addButton.disabled = count >= MAX_ROWS;
+                addButton.classList.toggle('disabled', count >= MAX_ROWS);
+            };
 
             const initializeEditors = () => {
                 rows.querySelectorAll('.expense-editor-wrapper').forEach((wrapper) => {
@@ -218,9 +236,115 @@
                 });
 
                 initializeEditors();
+                updateRowCount();
+            };
+
+            const buildChunkFormData = (entries, chunkIndex, totalRows, isLastChunk) => {
+                const formData = new FormData();
+                formData.append('_token', csrfToken);
+
+                entries.forEach((entry, index) => {
+                    ['expense_date', 'sector', 'description', 'amount', 'voucher_no'].forEach((field) => {
+                        const input = entry.querySelector(`[name$="[${field}]"]`);
+
+                        if (input) {
+                            formData.append(`expenses[${index}][${field}]`, input.value);
+                        }
+                    });
+
+                    const fileInput = entry.querySelector('[name$="[approval]"]');
+
+                    if (fileInput?.files[0]) {
+                        formData.append(`expenses[${index}][approval]`, fileInput.files[0]);
+                    }
+                });
+
+                if (isLastChunk && totalRows > CHUNK_SIZE) {
+                    formData.append('bulk_finalize', '1');
+                    formData.append('bulk_total', String(totalRows));
+                }
+
+                return formData;
+            };
+
+            const formatValidationError = (payload, chunkNumber, chunkSize) => {
+                const errors = payload?.errors ?? {};
+                const firstKey = Object.keys(errors)[0];
+                const firstMessage = firstKey ? errors[firstKey][0] : (payload?.message ?? 'খরচ সেভ করা যায়নি।');
+                const rowMatch = firstKey?.match(/expenses\.(\d+)\./);
+                const rowNumber = rowMatch ? (chunkNumber - 1) * chunkSize + Number(rowMatch[1]) + 1 : null;
+
+                return rowNumber
+                    ? `ক্রমিক নং ${rowNumber}: ${firstMessage}`
+                    : `অংশ ${chunkNumber}: ${firstMessage}`;
+            };
+
+            const submitInChunks = async () => {
+                const entries = [...rows.querySelectorAll('.expense-entry')];
+
+                if (entries.length > MAX_ROWS) {
+                    window.alert(`সর্বোচ্চ ${MAX_ROWS}টি খরচ একসাথে যোগ করা যাবে।`);
+                    return;
+                }
+
+                saveButton.disabled = true;
+                addButton.disabled = true;
+
+                let redirectMonth = null;
+                let savedCount = 0;
+                const totalChunks = Math.ceil(entries.length / CHUNK_SIZE);
+
+                try {
+                    for (let offset = 0; offset < entries.length; offset += CHUNK_SIZE) {
+                        const chunkNumber = Math.floor(offset / CHUNK_SIZE) + 1;
+                        const chunkEntries = entries.slice(offset, offset + CHUNK_SIZE);
+                        const isLastChunk = chunkNumber === totalChunks;
+
+                        saveLabel.textContent = totalChunks > 1
+                            ? `সেভ হচ্ছে... (${chunkNumber}/${totalChunks})`
+                            : 'সেভ হচ্ছে...';
+
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            body: buildChunkFormData(chunkEntries, chunkNumber, entries.length, isLastChunk),
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                            credentials: 'same-origin',
+                        });
+
+                        const payload = await response.json().catch(() => ({}));
+
+                        if (! response.ok) {
+                            throw new Error(formatValidationError(payload, chunkNumber, CHUNK_SIZE));
+                        }
+
+                        savedCount += payload.created ?? chunkEntries.length;
+                        redirectMonth = payload.redirect_month ?? redirectMonth;
+                    }
+
+                    const redirectUrl = new URL(indexUrl, window.location.origin);
+
+                    if (redirectMonth) {
+                        redirectUrl.searchParams.set('month', redirectMonth);
+                    }
+
+                    redirectUrl.searchParams.set('saved', String(savedCount));
+                    window.location.href = redirectUrl.toString();
+                } catch (error) {
+                    window.alert(error.message || 'খরচ সেভ করা যায়নি। আবার চেষ্টা করুন।');
+                    saveButton.disabled = false;
+                    updateRowCount();
+                }
             };
 
             addButton.addEventListener('click', () => {
+                if (rows.querySelectorAll('.expense-entry').length >= MAX_ROWS) {
+                    window.alert(`সর্বোচ্চ ${MAX_ROWS}টি খরচ একসাথে যোগ করা যাবে।`);
+                    return;
+                }
+
                 const clone = template.content.cloneNode(true);
                 const dateInput = clone.querySelector('[data-name="expense_date"]');
                 dateInput.value = new Date().toISOString().slice(0, 10);
@@ -239,9 +363,13 @@
                 renumberRows();
             });
 
-            renumberRows();
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                syncEditors();
+                submitInChunks();
+            });
 
-            document.querySelector('#expense-form').addEventListener('submit', syncEditors);
+            renumberRows();
         });
     </script>
 @endsection

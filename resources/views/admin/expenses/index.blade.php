@@ -50,6 +50,10 @@
         <div class="alert alert-success rounded-4">
             {{ session('status') }}
         </div>
+    @elseif (request()->filled('saved'))
+        <div class="alert alert-success rounded-4">
+            {{ request()->integer('saved') }}টি খরচ সফলভাবে যোগ করা হয়েছে।
+        </div>
     @endif
 
     <div class="card expense-card">

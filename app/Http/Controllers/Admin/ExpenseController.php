@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Expense;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -49,6 +50,8 @@ class ExpenseController extends Controller
     {
         return view('admin.expenses.create', [
             'selectedMonth' => $request->query('month', now()->format('Y-m')),
+            'maxBulkCreate' => config('expense.max_bulk_create'),
+            'bulkChunkSize' => config('expense.bulk_chunk_size'),
         ]);
     }
 
@@ -151,12 +154,14 @@ class ExpenseController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
         $this->normalizeAmountInputs($request);
 
+        $chunkSize = config('expense.bulk_chunk_size');
+
         $validated = $request->validate([
-            'expenses' => ['required', 'array', 'min:1'],
+            'expenses' => ['required', 'array', 'min:1', 'max:'.$chunkSize],
             'expenses.*.expense_date' => ['required', 'date'],
             'expenses.*.sector' => ['required', 'string', 'max:255'],
             'expenses.*.description' => ['required', 'string'],
@@ -165,6 +170,7 @@ class ExpenseController extends Controller
             'expenses.*.approval' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ], [
             'expenses.required' => 'কমপক্ষে একটি খরচ যোগ করুন।',
+            'expenses.max' => 'একটি অনুরোধে সর্বোচ্চ '.$chunkSize.'টি খরচ পাঠানো যাবে।',
             'expenses.*.expense_date.required' => 'তারিখ দিন।',
             'expenses.*.sector.required' => 'খাত দিন।',
             'expenses.*.description.required' => 'বিবরণ দিন।',
@@ -174,7 +180,9 @@ class ExpenseController extends Controller
             'expenses.*.approval.mimes' => 'অনুমোদন signature শুধু PNG, JPG বা JPEG হতে পারবে।',
         ]);
 
-        DB::transaction(function () use ($validated): void {
+        $created = 0;
+
+        DB::transaction(function () use ($validated, &$created): void {
             foreach ($validated['expenses'] as $expense) {
                 Expense::query()->create([
                     'expense_month' => substr($expense['expense_date'], 0, 7),
@@ -185,10 +193,25 @@ class ExpenseController extends Controller
                     'voucher_no' => $expense['voucher_no'] ?? null,
                     'approval' => $this->storeApprovalSignature($expense['approval'] ?? null),
                 ]);
+
+                $created++;
             }
         });
 
         $redirectMonth = substr($validated['expenses'][0]['expense_date'], 0, 7);
+
+        if ($request->expectsJson()) {
+            $message = $request->boolean('bulk_finalize')
+                ? $request->integer('bulk_total').'টি খরচ সফলভাবে যোগ করা হয়েছে।'
+                : $created.'টি খরচ সেভ হয়েছে।';
+
+            return response()->json([
+                'success' => true,
+                'created' => $created,
+                'redirect_month' => $redirectMonth,
+                'message' => $message,
+            ]);
+        }
 
         return redirect()
             ->route('admin.expenses.index', ['month' => $redirectMonth])
